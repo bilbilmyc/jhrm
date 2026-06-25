@@ -1,23 +1,30 @@
-// App entry. Slice 2 wires WorldView into the root.
+// App entry. Slices 1-7 wired in:
+// - SaveService loads on launch (or fresh state if no save)
+// - WorldView is the main screen
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
+import 'save/save_service.dart';
 import 'state/game_state.dart';
 import 'world/world_view.dart';
 
-void main() {
-  runApp(const JhrmApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final dir = await getApplicationDocumentsDirectory();
+  final saveDir = Directory('${dir.path}/saves');
+  final saveService = SaveService(directory: saveDir);
+  final loaded = await saveService.load();
+  final state = loaded ?? GameState.fresh();
+  runApp(JhrmApp(state: state, saveService: saveService));
 }
 
-class JhrmApp extends StatefulWidget {
-  const JhrmApp({super.key});
-
-  @override
-  State<JhrmApp> createState() => _JhrmAppState();
-}
-
-class _JhrmAppState extends State<JhrmApp> {
-  final _state = GameState.fresh();
+class JhrmApp extends StatelessWidget {
+  const JhrmApp({super.key, required this.state, required this.saveService});
+  final GameState state;
+  final SaveService saveService;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,7 @@ class _JhrmAppState extends State<JhrmApp> {
         colorSchemeSeed: Colors.amber,
         useMaterial3: true,
       ),
-      home: WorldView(state: _state),
+      home: WorldView(state: state, saveService: saveService),
     );
   }
 }

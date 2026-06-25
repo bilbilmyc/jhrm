@@ -3,13 +3,15 @@
 
 import 'package:flutter/material.dart';
 
+import '../save/save_service.dart';
 import '../state/game_state.dart';
 import 'mini_map.dart';
 import 'node_registry.dart';
 
 class WorldView extends StatefulWidget {
-  const WorldView({super.key, required this.state});
+  const WorldView({super.key, required this.state, this.saveService});
   final GameState state;
+  final SaveService? saveService;
 
   @override
   State<WorldView> createState() => _WorldViewState();
@@ -47,9 +49,12 @@ class _WorldViewState extends State<WorldView> {
                           trailing: widget.state.world.selectedNodeId == n.id
                               ? const Icon(Icons.check)
                               : null,
-                          onTap: () {
+                          onTap: () async {
                             widget.state.world.selectedNodeId = n.id;
                             widget.state.notifyListeners();
+                            if (widget.saveService != null) {
+                              await widget.saveService!.save(widget.state);
+                            }
                           },
                         ),
                         const Divider(height: 1),
