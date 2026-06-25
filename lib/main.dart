@@ -4,12 +4,14 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'content/content_loader.dart';
 import 'save/save_service.dart';
 import 'state/game_state.dart';
+import 'ui/gold_finger_overlay.dart';
 import 'world/world_view.dart';
 
 void main() async {
@@ -26,6 +28,7 @@ void main() async {
     state: state,
     saveService: saveService,
     contentLoader: contentLoader,
+    enableGoldFinger: kDebugMode,
   ));
 }
 
@@ -35,10 +38,12 @@ class JhrmApp extends StatelessWidget {
     required this.state,
     required this.saveService,
     required this.contentLoader,
+    this.enableGoldFinger = false,
   });
   final GameState state;
   final SaveService saveService;
   final ContentLoader contentLoader;
+  final bool enableGoldFinger;
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +53,13 @@ class JhrmApp extends StatelessWidget {
         colorSchemeSeed: Colors.amber,
         useMaterial3: true,
       ),
-      home: WorldView(
+      home: GoldFingerOverlay(
         state: state,
-        saveService: saveService,
-        contentLoader: contentLoader,
+        child: WorldView(
+          state: state,
+          saveService: saveService,
+          contentLoader: contentLoader,
+        ),
       ),
     );
   }
