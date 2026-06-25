@@ -1,5 +1,7 @@
 // WorldView: 修真感 list + 2D map. 节点 cards use element glyph + 灵气 ring.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../content/content_loader.dart';
@@ -10,6 +12,8 @@ import '../engine/tribulation_engine.dart';
 import '../save/save_service.dart';
 import '../state/enums.dart' as domain;
 import '../state/game_state.dart';
+import '../ui/breakthrough_view.dart';
+import '../ui/closure_timer.dart';
 import '../ui/status_bar.dart';
 import '../ui/theme.dart';
 import 'mini_map.dart';
@@ -31,15 +35,37 @@ class WorldView extends StatefulWidget {
   State<WorldView> createState() => _WorldViewState();
 }
 
-class _WorldViewState extends State<WorldView> {
+class _WorldViewState extends State<WorldView>
+    with SingleTickerProviderStateMixin {
   int _tab = 0;
   IfSegment? _activeSegment;
   bool _tribulationInProgress = false;
   TribulationResult? _tribulationResult;
 
+  // Closure (闭关闭环): a 30s real-time timer driven by an AnimationController.
+  late final AnimationController _closureController;
+  bool _closureRunning = false;
+
+  // 突破 画面: a brief screen shown after a successful 小层 breakthrough
+  // (not a 渡劫 — that's a different event).
+  bool? _breakthroughSuccess;
+
+  @override
+  void initState() {
+    super.initState();
+    _closureController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 30),
+    );
+  }
+
+  @override
+  void dispose() {
+    _closureController.dispose();
+    super.dispose();
+  }
+
   void _onNodeTapped(String nodeName) {
-    // Always record selection (visible in the card checkmark), even when
-    // no IF content exists for that node.
     final node = NodeRegistry.mortalNodes.firstWhere(
       (n) => n.name == nodeName,
       orElse: () => NodeRegistry.mortalNodes.first,
@@ -60,12 +86,41 @@ class _WorldViewState extends State<WorldView> {
     }
   }
 
-  void _onCultivate() {
-    if (_tribulationInProgress) return;
-    final engine = CultivationEngine(widget.state);
-    engine.startClosure();
-    engine.completeClosure();
+  void _startClosure() {
+    if (_closureRunning) return;
+    setState(() => _closureRunning = true);
+    _closureController.forward(from: 0).whenComplete(() {
+      if (!mounted) return;
+      _finishClosure();
+    });
+  }
+
+  void _cancelClosure() {
+    if (!_closureRunning) return;
+    _closureController.stop();
+    setState(() => _closureRunning = false);
+  }
+
+  void _finishClosure() {
+    final beforeLayer = widget.state.player.layer;
+    final beforeRealm = widget.state.player.realm;
+    CultivationEngine(widget.state).completeClosure();
+    setState(() {
+      _closureRunning = false;
+    });
+    // Detect 小层 breakthrough (success path bumps layer within same realm).
+    if (widget.state.player.realm == beforeRealm &&
+        widget.state.player.layer > beforeLayer) {
+      setState(() => _breakthroughSuccess = true);
+    }
+    if (widget.saveService != null) {
+      widget.saveService!.save(widget.state);
+    }
     _checkTribulation();
+  }
+
+  void _dismissBreakthrough() {
+    setState(() => _breakthroughSuccess = null);
   }
 
   void _checkTribulation() {
@@ -99,6 +154,13 @@ class _WorldViewState extends State<WorldView> {
         onExit: _exitIf,
       );
     }
+    if (_breakthroughSuccess != null) {
+      return BreakthroughView(
+        success: _breakthroughSuccess!,
+        state: widget.state,
+        onDismiss: _dismissBreakthrough,
+      );
+    }
     if (_tribulationResult != null) {
       return _TribulationResultView(
         result: _tribulationResult!,
@@ -120,14 +182,6 @@ class _WorldViewState extends State<WorldView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('凡 界'),
-        actions: [
-          IconButton(
-            key: const Key('cultivate-button'),
-            icon: const Icon(Icons.self_improvement),
-            tooltip: '闭关',
-            onPressed: _onCultivate,
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(
@@ -141,23 +195,38 @@ class _WorldViewState extends State<WorldView> {
           ),
         ),
       ),
+      floatingActionButton: _ClosureFab(
+        controller: _closureController,
+        running: _closureRunning,
+        onStart: _startClosure,
+        onCancel: _cancelClosure,
+      ),
       body: XianxiaTheme.scrollBackground(
-        child: Column(
+        child: Stack(
           children: [
-            StatusBar(state: widget.state),
-            Expanded(
-              child: _tab == 0
-                  ? _NodeList(
-                      state: widget.state,
-                      nodes: nodes,
-                      onNodeTapped: _onNodeTapped,
-                    )
-                  : MiniMap(
-                      state: widget.state,
-                      nodes: nodes,
-                      onNodeTapped: _onNodeTapped,
-                    ),
+            Column(
+              children: [
+                StatusBar(state: widget.state),
+                Expanded(
+                  child: _tab == 0
+                      ? _NodeList(
+                          state: widget.state,
+                          nodes: nodes,
+                          onNodeTapped: _onNodeTapped,
+                        )
+                      : MiniMap(
+                          state: widget.state,
+                          nodes: nodes,
+                          onNodeTapped: _onNodeTapped,
+                        ),
+                ),
+              ],
             ),
+            if (_closureRunning)
+              ClosureOverlay(
+                state: widget.state,
+                controller: _closureController,
+              ),
           ],
         ),
       ),
@@ -193,6 +262,38 @@ class _WorldViewState extends State<WorldView> {
   }
 }
 
+class _ClosureFab extends StatelessWidget {
+  const _ClosureFab({
+    required this.controller,
+    required this.running,
+    required this.onStart,
+    required this.onCancel,
+  });
+  final AnimationController controller;
+  final bool running;
+  final VoidCallback onStart;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: running ? XianxiaTheme.cinnabarRed : XianxiaTheme.inkBlack,
+      foregroundColor: XianxiaTheme.paperWhite,
+      onPressed: running ? onCancel : onStart,
+      icon: running ? const Icon(Icons.stop) : const Icon(Icons.self_improvement),
+      label: running
+          ? AnimatedBuilder(
+              animation: controller,
+              builder: (_, __) {
+                final remaining = (30 * (1 - controller.value)).ceil();
+                return Text('闭关 $remaining s');
+              },
+            )
+          : const Text('闭 关'),
+    );
+  }
+}
+
 class _NodeList extends StatelessWidget {
   const _NodeList({
     required this.state,
@@ -206,7 +307,7 @@ class _NodeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
       child: Column(
         children: [
           for (final n in nodes)
