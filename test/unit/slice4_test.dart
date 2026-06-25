@@ -64,6 +64,29 @@ void main() {
       // that the layer is in {1, 2} (probabilistic but bounded).
       expect(s.player.layer, anyOf(1, 2));
     });
+
+    test('forceSuccess forces breakthrough + auto-clears after one use (slice 20)', () {
+      final s = GameState.fresh();
+      // Pre-fail condition: no heart alignment, no force → 80% base rate.
+      // With forceSuccess=true, even an unlucky roll yields success, and
+      // the flag must clear so the next breakthrough is back to RNG.
+      s.forceSuccess = true;
+      final e = CultivationEngine(s);
+      e.cultivationXp = 99;
+      e.startClosure();
+      e.completeClosure();
+      expect(s.player.layer, 2, reason: 'force must yield success');
+      expect(s.forceSuccess, isFalse, reason: 'flag auto-clears after one use');
+
+      // Subsequent closure with no force falls back to RNG (rate unchanged).
+      s.player.cultivationXp = 99;
+      e.startClosure();
+      e.completeClosure();
+      // We can't assert the layer delta deterministically without forcing
+      // the RNG, but we CAN assert the flag stayed false (no accidental
+      // re-set) and the engine didn't crash.
+      expect(s.forceSuccess, isFalse);
+    });
   });
 
   group('灵根 (slice 4)', () {

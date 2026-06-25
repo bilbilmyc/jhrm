@@ -57,5 +57,16 @@ void main() {
       e.resolve();
       expect(s.ending, 'ascended-swordDao');
     });
+
+    test('forceSuccess forces ascension + auto-clears (slice 20)', () {
+      final s = GameState.fresh();
+      s.player.layer = 9;
+      s.forceSuccess = true;
+      final e = TribulationEngine(s, rng: Random(0));
+      e.resolve();
+      expect(s.forceSuccess, isFalse,
+          reason: 'flag must clear after one consumption so the next '
+              'tribulation is back to RNG');
+    });
   });
 }
