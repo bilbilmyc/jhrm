@@ -29,6 +29,10 @@ class GameState extends ChangeNotifier {
   /// Cleared after one use so gold-finger doesn't permanently break balance.
   bool forceSuccess = false;
 
+  /// Recorded on ascension (decisions.md #5: 飞升 success = 通关).
+  /// null while playing. Format: 'ascended-<heartPathName>' (e.g. ascended-swordDao).
+  String? ending;
+
   /// 30s 闭关 = 1 month 寿元 (decisions.md #12, MVP only)
   static const int closureLifespanCost = 1;
   static const int closureLifespanMaxLianQi = 1200; // 100 years * 12
