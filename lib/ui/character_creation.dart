@@ -1,12 +1,10 @@
-// CharacterCreation: first-launch flow for choosing 灵根.
-// Per decisions.md / slice 11: 5 elements (金/木/水/火/土).
-// Player picks one, taps "踏入修真", then onDone is called and the
-// game routes to WorldView.
+// CharacterCreation: 修真感风格. Five 灵根 chips + 踏入修真 confirm.
 
 import 'package:flutter/material.dart';
 
 import '../state/enums.dart' as domain;
 import '../state/game_state.dart';
+import 'theme.dart';
 
 class CharacterCreation extends StatefulWidget {
   const CharacterCreation({super.key, required this.state, required this.onDone});
@@ -24,44 +22,110 @@ class _CharacterCreationState extends State<CharacterCreation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('踏入修真')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 8),
-            Text('请选择灵根', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 4),
-            const Text('灵根决定你能学的功法。'),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
+      body: XianxiaTheme.scrollBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final e in _rootElements)
-                  ChoiceChip(
-                    label: Text(e.displayName, style: const TextStyle(fontSize: 18)),
-                    selected: _picked == e,
-                    onSelected: (_) {
-                      setState(() => _picked = e);
-                      widget.state.player.root = e;
-                      widget.state.notifyListeners();
-                    },
+                const SizedBox(height: 16),
+                const Text(
+                  '请选灵根',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: XianxiaTheme.inkBlack,
+                    letterSpacing: 8,
                   ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '灵根决定你能学的功法',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: XianxiaTheme.shadowBrown,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (final e in _rootElements)
+                      _elementCard(e),
+                  ],
+                ),
+                const Spacer(),
+                XianxiaTheme.sealDivider(),
+                ElevatedButton(
+                  onPressed: _picked == null
+                      ? null
+                      : () {
+                          widget.state.characterCreated = true;
+                          widget.state.notifyListeners();
+                          widget.onDone();
+                        },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('踏 入 修 真',
+                        style: TextStyle(
+                          fontSize: 18,
+                          letterSpacing: 8,
+                        )),
+                  ),
+                ),
               ],
             ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _picked == null
-                  ? null
-                  : () {
-                      widget.state.characterCreated = true;
-                      widget.state.notifyListeners();
-                      widget.onDone();
-                    },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text('踏入修真', style: TextStyle(fontSize: 18)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _elementCard(domain.Element e) {
+    final color = XianxiaTheme.elementColor[e.displayName] ?? XianxiaTheme.goldLeaf;
+    final selected = _picked == e;
+    return GestureDetector(
+      onTap: () {
+        setState(() => _picked = e);
+        widget.state.player.root = e;
+        widget.state.notifyListeners();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 96,
+        height: 110,
+        decoration: BoxDecoration(
+          color: selected ? color.withOpacity(0.15) : XianxiaTheme.paperWhite,
+          border: Border.all(
+            color: selected ? color : XianxiaTheme.shadowBrown,
+            width: selected ? 2 : 0.5,
+          ),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              e.displayName,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '灵根',
+              style: TextStyle(
+                fontSize: 11,
+                color: color,
+                letterSpacing: 4,
               ),
             ),
           ],

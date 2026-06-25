@@ -1,11 +1,11 @@
-// StatusBar: read-only display of the player state.
-// Shows 境界/层, 修为 bar, 寿元, 灵根, 5 道心 vector.
+// StatusBar: 修真感 style. Shows 境界/层, 修为 bar, 寿元, 灵根, 5 道心 vector.
 
 import 'package:flutter/material.dart';
 
 import '../engine/cultivation_engine.dart';
 import '../state/enums.dart';
 import '../state/game_state.dart';
+import 'theme.dart';
 
 class StatusBar extends StatelessWidget {
   const StatusBar({super.key, required this.state});
@@ -20,31 +20,61 @@ class StatusBar extends StatelessWidget {
     final lifespanRatio = p.lifespanMax == 0
         ? 0.0
         : p.lifespan / p.lifespanMax;
+    final rootColor = XianxiaTheme.elementColor[p.root.displayName] ?? XianxiaTheme.goldLeaf;
 
     return Container(
-      padding: const EdgeInsets.all(12),
-      color: Colors.black.withOpacity(0.05),
+      decoration: const BoxDecoration(
+        color: XianxiaTheme.inkBlack,
+        border: Border(
+          bottom: BorderSide(color: XianxiaTheme.goldLeaf, width: 1),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '${p.realm.displayName} ${p.layer}/9',
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            children: [
+              Text(
+                p.realm.displayName,
+                style: const TextStyle(
+                  color: XianxiaTheme.paperWhite,
+                  fontSize: 20,
+                  letterSpacing: 4,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '第 ${p.layer} 层',
+                style: const TextStyle(
+                  color: XianxiaTheme.scrollTan,
+                  fontSize: 14,
+                ),
+              ),
+              const Spacer(),
+              _elementChip(p.root.displayName, rootColor),
+            ],
           ),
-          const SizedBox(height: 6),
-          _bar('修为', xpRatio, '${p.cultivationXp}/${CultivationEngine.cultivationXpMax}'),
-          _bar('寿元', lifespanRatio, '${p.lifespan}/${p.lifespanMax} 月'),
+          const SizedBox(height: 8),
+          _bar('修为', xpRatio, '${p.cultivationXp}/${CultivationEngine.cultivationXpMax}',
+              XianxiaTheme.goldLeaf),
           const SizedBox(height: 4),
-          Text('灵根: ${p.root.displayName}'),
+          _bar('寿元', lifespanRatio, '${p.lifespan}/${p.lifespanMax} 月',
+              lifespanRatio < 0.3 ? XianxiaTheme.cinnabarRed : XianxiaTheme.jadeGreen),
+          const SizedBox(height: 10),
+          const Text('心之所向', style: TextStyle(
+            color: XianxiaTheme.goldLeaf,
+            fontSize: 12,
+            letterSpacing: 2,
+          )),
           const SizedBox(height: 4),
           Wrap(
             spacing: 8,
+            runSpacing: 4,
             children: [
               for (final e in p.heartVector.entries)
-                Chip(
-                  label: Text('${e.key.displayName} ${e.value}'),
-                  visualDensity: VisualDensity.compact,
-                ),
+                _heartChip(e.key, e.value),
             ],
           ),
         ],
@@ -52,20 +82,85 @@ class StatusBar extends StatelessWidget {
     );
   }
 
-  Widget _bar(String label, double ratio, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          SizedBox(width: 36, child: Text(label)),
-          Expanded(
+  Widget _bar(String label, double ratio, String value, Color color) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 32,
+          child: Text(label, style: const TextStyle(
+            color: XianxiaTheme.scrollTan,
+            fontSize: 12,
+          )),
+        ),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: ratio.clamp(0.0, 1.0),
               minHeight: 6,
+              backgroundColor: XianxiaTheme.shadowBrown,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
-          const SizedBox(width: 8),
-          Text(value, style: const TextStyle(fontSize: 11)),
+        ),
+        const SizedBox(width: 8),
+        Text(value, style: const TextStyle(
+          color: XianxiaTheme.scrollTan,
+          fontSize: 10,
+        )),
+      ],
+    );
+  }
+
+  Widget _elementChip(String name, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        border: Border.all(color: color, width: 1),
+        borderRadius: BorderRadius.circular(2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('灵根', style: TextStyle(color: color, fontSize: 10)),
+          const SizedBox(width: 4),
+          Text(name, style: TextStyle(
+            color: color,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget _heartChip(HeartPath path, int value) {
+    final color = XianxiaTheme.heartColor[path.displayName] ?? XianxiaTheme.scrollTan;
+    final active = value > 0;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: active ? color.withOpacity(0.25) : Colors.transparent,
+        border: Border.all(
+          color: active ? color : XianxiaTheme.shadowBrown,
+          width: active ? 1.2 : 0.5,
+        ),
+        borderRadius: BorderRadius.circular(2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(path.displayName, style: TextStyle(
+            color: active ? color : XianxiaTheme.scrollTan,
+            fontSize: 11,
+            fontWeight: active ? FontWeight.w600 : FontWeight.normal,
+          )),
+          const SizedBox(width: 4),
+          Text('$value', style: TextStyle(
+            color: active ? color : XianxiaTheme.scrollTan,
+            fontSize: 11,
+          )),
         ],
       ),
     );

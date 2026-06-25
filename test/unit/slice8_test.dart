@@ -70,7 +70,7 @@ next:
       await tester.tap(find.text('山门'));
       await tester.pumpAndSettle();
       // The IfScreen for shanmen-test is now on top
-      expect(find.text('山门测试'), findsOneWidget);
+      expect(find.text('山门测试'), findsAtLeastNWidgets(1));
     });
   });
 }

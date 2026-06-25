@@ -13,6 +13,7 @@ import 'save/save_service.dart';
 import 'state/game_state.dart';
 import 'ui/character_creation.dart';
 import 'ui/gold_finger_overlay.dart';
+import 'ui/theme.dart';
 import 'world/world_view.dart';
 
 void main() async {
@@ -65,10 +66,7 @@ class _JhrmAppState extends State<JhrmApp> {
           );
     return MaterialApp(
       title: '修真',
-      theme: ThemeData(
-        colorSchemeSeed: Colors.amber,
-        useMaterial3: true,
-      ),
+      theme: XianxiaTheme.light(),
       home: GoldFingerOverlay(state: widget.state, child: home),
     );
   }

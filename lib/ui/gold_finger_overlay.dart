@@ -1,11 +1,5 @@
-// GoldFingerOverlay: invisible 50x50 trigger in top-left + 5-tap-in-1s
-// detection + modal menu with 8 actions.
-//
-// Per docs/design/gold-finger.md + ADR-0002:
-// - 5 taps within 1s opens the menu
-// - Menu items dispatch to GoldFinger.action(...)
-// - Tapping outside dismisses
-// - Hidden in normal UI (no visible affordance)
+// GoldFingerOverlay: 修真风格. Same 5-tap trigger, but the menu is
+// styled as a 符箓 (talisman) panel with ink-and-gold colors.
 
 import 'dart:math';
 
@@ -13,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../engine/gold_finger.dart';
 import '../state/game_state.dart';
+import 'theme.dart';
 
 class GoldFingerOverlay extends StatefulWidget {
   const GoldFingerOverlay({super.key, required this.state, required this.child});
@@ -43,7 +38,6 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
     return Stack(
       children: [
         widget.child,
-        // Invisible trigger: 50x50 in the top-left corner.
         Positioned(
           left: 0,
           top: 0,
@@ -56,51 +50,97 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
             child: const SizedBox.shrink(),
           ),
         ),
-        if (_open)
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () => setState(() => _open = false),
-              child: Container(
-                color: Colors.black54,
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () {}, // absorb taps inside the panel
-                  child: Container(
-                    width: 280,
-                    padding: const EdgeInsets.all(16),
+        if (_open) _talismanPanel(),
+      ],
+    );
+  }
+
+  Widget _talismanPanel() {
+    return Positioned.fill(
+      child: GestureDetector(
+        onTap: () => setState(() => _open = false),
+        child: Container(
+          color: Colors.black54,
+          alignment: Alignment.center,
+          child: GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: 300,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: XianxiaTheme.paperWhite,
+                border: Border.all(color: XianxiaTheme.cinnabarRed, width: 2),
+                borderRadius: BorderRadius.circular(2),
+                boxShadow: const [
+                  BoxShadow(
+                    color: XianxiaTheme.cinnabarRed,
+                    blurRadius: 0,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.amber.shade50,
-                      borderRadius: BorderRadius.circular(12),
+                      color: XianxiaTheme.cinnabarRed,
+                      borderRadius: BorderRadius.circular(1),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text('金手指',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 12),
-                        for (final m in _menuItems())
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: ElevatedButton(
-                              onPressed: () => _dispatch(m),
-                              child: Text(_labelFor(m)),
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          onPressed: () => setState(() => _open = false),
-                          child: const Text('关闭'),
-                        ),
-                      ],
+                    child: const Text(
+                      '金 手 指',
+                      style: TextStyle(
+                        color: XianxiaTheme.paperWhite,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8,
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  XianxiaTheme.sealDivider(),
+                  for (final a in _menuItems())
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () => _dispatch(a),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: XianxiaTheme.inkBlack,
+                            side: const BorderSide(
+                              color: XianxiaTheme.shadowBrown,
+                              width: 0.5,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.centerLeft,
+                          ),
+                          child: Text(
+                            _labelFor(a),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => setState(() => _open = false),
+                    child: const Text('关闭',
+                        style: TextStyle(
+                          color: XianxiaTheme.shadowBrown,
+                          letterSpacing: 2,
+                        )),
+                  ),
+                ],
               ),
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 
@@ -117,19 +157,19 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
   String _labelFor(GoldAction a) {
     switch (a) {
       case GoldAction.cultivationTimes10:
-        return '修为×10';
+        return '修为 × 10';
       case GoldAction.cultivationMax:
-        return '修为满';
+        return '修为灌满';
       case GoldAction.switchRoot:
-        return '切换灵根';
+        return '转换灵根';
       case GoldAction.resetHeart:
-        return '切换道心';
+        return '重置道心';
       case GoldAction.karmaPlus10:
         return '+10 因果';
       case GoldAction.lifespanPlus10:
         return '+10 寿元';
       case GoldAction.tribulationSuccess:
-        return '渡劫成功';
+        return '强渡天劫';
       default:
         return a.name;
     }

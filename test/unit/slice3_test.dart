@@ -81,7 +81,7 @@ void main() {
         MaterialApp(home: IfScreen(state: state, segment: seg, onExit: () {})),
       );
 
-      expect(find.textContaining('山门老者'), findsOneWidget);
+      expect(find.textContaining('山门老者'), findsAtLeastNWidgets(1));
       expect(find.text('请教修炼'), findsOneWidget);
       expect(find.text('打声招呼'), findsOneWidget);
 

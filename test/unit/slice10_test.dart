@@ -31,9 +31,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Menu should be visible
-      expect(find.text('修为×10'), findsOneWidget);
-      expect(find.text('修为满'), findsOneWidget);
-      expect(find.text('切换灵根'), findsOneWidget);
+      expect(find.text('修为 × 10'), findsOneWidget);
+      expect(find.text('修为灌满'), findsOneWidget);
+      expect(find.text('转换灵根'), findsOneWidget);
     });
 
     testWidgets('tapping 修为满 executes the action on GameState', (tester) async {
@@ -53,7 +53,7 @@ void main() {
       }
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('修为满'));
+      await tester.tap(find.text('修为灌满'));
       await tester.pumpAndSettle();
       // After 修为满, the engine sets xp to 100 — but 修为满 in gold finger
       // also triggers the 突破 pipeline, which may advance the layer. The

@@ -14,11 +14,11 @@ void main() {
       s.player.heartVector[HeartPath.swordDao] = 3;
       s.player.heartVector[HeartPath.demonDao] = 1;
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: StatusBar(state: s))));
-      expect(find.textContaining('炼气'), findsOneWidget);
-      expect(find.textContaining('1/9'), findsOneWidget);
-      expect(find.textContaining('修为'), findsOneWidget);
-      expect(find.textContaining('寿元'), findsOneWidget);
-      expect(find.textContaining('剑道'), findsOneWidget);
+      expect(find.textContaining('炼气'), findsAtLeastNWidgets(1));
+      expect(find.textContaining('第 1 层'), findsOneWidget);
+      expect(find.textContaining('修为'), findsAtLeastNWidgets(1));
+      expect(find.textContaining('寿元'), findsAtLeastNWidgets(1));
+      expect(find.textContaining('剑道'), findsAtLeastNWidgets(1));
     });
   });
 

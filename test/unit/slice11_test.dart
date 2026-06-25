@@ -30,7 +30,7 @@ void main() {
       await tester.tap(find.text('金'));
       await tester.pump();
       expect(s.player.root, domain.Element.gold);
-      await tester.tap(find.widgetWithText(ElevatedButton, '踏入修真'));
+      await tester.tap(find.widgetWithText(ElevatedButton, '踏 入 修 真'));
       await tester.pumpAndSettle();
       expect(done, isTrue);
       expect(s.characterCreated, isTrue);
