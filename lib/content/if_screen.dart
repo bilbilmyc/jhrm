@@ -101,14 +101,24 @@ class IfScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 if (segment.next.isEmpty)
-                  const Center(
-                    child: Text(
-                      '（终）',
-                      style: TextStyle(
-                        color: XianxiaTheme.cinnabarRed,
-                        fontSize: 18,
-                        letterSpacing: 8,
-                      ),
+                  Center(
+                    child: Column(
+                      children: [
+                        const Text(
+                          '（终）',
+                          style: TextStyle(
+                            color: XianxiaTheme.cinnabarRed,
+                            fontSize: 18,
+                            letterSpacing: 8,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton(
+                          onPressed: onExit,
+                          child: const Text('返回凡界',
+                              style: TextStyle(letterSpacing: 4)),
+                        ),
+                      ],
                     ),
                   )
                 else
@@ -120,6 +130,9 @@ class IfScreen extends StatelessWidget {
                           _applyChoice(c);
                           if (c.action == 'tribulation') {
                             onTribulationChoice?.call(c);
+                          } else if (c.goto == null) {
+                            // Choice with no target: end the story here.
+                            onExit();
                           } else {
                             onNavigate?.call(segment);
                           }
