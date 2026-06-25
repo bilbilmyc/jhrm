@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jhrm/state/enums.dart';
+import 'package:jhrm/state/enums.dart' as domain;
 import 'package:jhrm/state/game_state.dart';
 import 'package:jhrm/ui/character_creation.dart';
 
@@ -29,8 +29,8 @@ void main() {
       );
       await tester.tap(find.text('金'));
       await tester.pump();
-      expect(s.player.root, Element.gold);
-      await tester.tap(find.text('踏入修真'));
+      expect(s.player.root, domain.Element.gold);
+      await tester.tap(find.widgetWithText(ElevatedButton, '踏入修真'));
       await tester.pumpAndSettle();
       expect(done, isTrue);
       expect(s.characterCreated, isTrue);

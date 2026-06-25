@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../state/enums.dart';
+import '../state/enums.dart' as domain;
 import '../state/game_state.dart';
 
 class CharacterCreation extends StatefulWidget {
@@ -18,7 +18,7 @@ class CharacterCreation extends StatefulWidget {
 }
 
 class _CharacterCreationState extends State<CharacterCreation> {
-  Element? _picked;
+  domain.Element? _picked;
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +70,11 @@ class _CharacterCreationState extends State<CharacterCreation> {
     );
   }
 
-  static const List<Element> _rootElements = [
-    Element.gold,
-    Element.wood,
-    Element.water,
-    Element.fire,
-    Element.earth,
+  static const List<domain.Element> _rootElements = [
+    domain.Element.gold,
+    domain.Element.wood,
+    domain.Element.water,
+    domain.Element.fire,
+    domain.Element.earth,
   ];
 }
