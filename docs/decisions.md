@@ -24,7 +24,7 @@
 | 13 | 渡劫 success 公式 | `50% + (寿元/上限 × 20%, cap 20%) + 道心最强 path × 10% + forceSuccess 100%`。 |
 | 14 | 小层突破公式 | `80% + 道心 alignment 10% + forceSuccess 100%`。失败扣 30% 修为，寿元 -1 月（无论成败）。 |
 | 15 | GameState 14 字段 | 全保留 14 系统字段 + 3 子结构（World/IfState/ProceduralSeed）。所有字段用默认值（null/0/[]），fromJson optional 读取。 |
-| 16 | v0.2+ 文档 | **未决定（被修真 ladder 修真 ladder bug 中断）** — 候选：A 保留现状 / B 加 `Status: DEFERRED` 头 |
+| 16 | v0.2+ 文档 | **未决定（被the-bug bug 中断）** — 候选：A 保留现状 / B 加 `Status: DEFERRED` 头 |
 
 ---
 
@@ -70,8 +70,8 @@
 ## 仍需决定（deferred）
 
 - **决定 #16**：v0.2+ 文档（combat/treasure/spirit-beast/dao-companion/disciple/reputation/reincarnation/world-event + karma full）怎么处理。候选：保留现状 / 加 `Status: DEFERRED` 头 / 移到 `docs/design-deferred/`
-- **placeholder 泄漏修复**：`docs/design/combat.md` §10、`docs/design/karma.md` §3.1 有"修真 ladder 修真 ladder"占位符
-- **combat.md 修真 ladder 修真 ladder 数据规模** 一节是模板未替换（修真 ladder 修真 ladder 修真 ladder 修真 ladder）
+- **placeholder 泄漏修复**：`docs/design/combat.md` §10、`docs/design/karma.md` §3.1 有"the-bug"占位符
+- **combat.md the-bug 数据规模** 一节是模板未替换（the-bug the-bug）
 - **测试 seam**：修真 ladder 上 1 局 ~5 min，单元测试哪些必须？
 - **修真 ladder 上 1 局时间预算**：MVP 一局 ~5 分钟（30s × 9 层），金手指 `[修为满]` 一键通关会破坏这个节奏
 

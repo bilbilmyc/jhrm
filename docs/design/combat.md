@@ -279,7 +279,7 @@ tribulationSuccess = base 50%
 
 > **Status**: DEFERRED to 筑基+。Per `docs/decisions.md` 决定 #6：MVP 战斗 = 单次选功法 + 文字结算。combat 系统整套（HP bar / 回合 / 撤退 / loot）延后到筑基+实现。渡劫 IF 段走 IF 段系统，不走 combat 系统。
 >
-> 原 §10 的占位符（"修真 ladder 修真 ladder"）已清理。详细测试用例待 combat 系统在筑基+ 阶段落实后补写。
+> 原 §10 的占位符（"the-bug"）已清理。详细测试用例待 combat 系统在筑基+ 阶段落实后补写。
 
 ---
 
