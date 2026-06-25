@@ -28,6 +28,7 @@ class Player {
     required this.lifespan,
     required this.lifespanMax,
     required this.root,
+    this.cultivationXp = 0,
     Map<HeartPath, int>? heartVector,
     this.equipment = const [],
     this.elixirs = const [],
@@ -52,6 +53,7 @@ class Player {
   int layer; // 1-9
   int lifespan;
   int lifespanMax;
+  int cultivationXp = 0; // 修为 economy (0..100 at 炼气)
   Element root;
   Map<HeartPath, int> heartVector; // 5-dim (decisions.md #4)
 
@@ -85,6 +87,7 @@ class Player {
         'layer': layer,
         'lifespan': lifespan,
         'lifespanMax': lifespanMax,
+        'cultivationXp': cultivationXp,
         'root': root.name,
         'heartVector': {for (final e in heartVector.entries) e.key.name: e.value},
         'equipment': equipment.map((t) => t.toJson()).toList(),
@@ -121,6 +124,7 @@ class Player {
       layer: (j['layer'] as num).toInt(),
       lifespan: (j['lifespan'] as num).toInt(),
       lifespanMax: (j['lifespanMax'] as num).toInt(),
+      cultivationXp: (j['cultivationXp'] as num?)?.toInt() ?? 0,
       root: Element.fromName(j['root'] as String),
       heartVector: heart,
       equipment: ((j['equipment'] as List?) ?? const [])

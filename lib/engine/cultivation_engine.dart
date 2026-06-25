@@ -2,6 +2,9 @@
 // Per decisions.md #12: 30s 闭 = 1 月寿元. MVP only 炼气 9 层.
 // Per decisions.md #14: 突破 success 80% + 道心 alignment 10% + force.
 // Per decisions.md #8: wall-clock timer, no pause on background.
+//
+// 修为 lives on Player (not on the engine) so any number of engine
+// instances (gold-finger, UI, persistence) all read/write the same value.
 
 import 'dart:math';
 
@@ -9,10 +12,10 @@ import '../state/enums.dart';
 import '../state/game_state.dart';
 
 class CultivationEngine {
-  CultivationEngine(this.state);
+  CultivationEngine(this.state, {Random? rng}) : _rng = rng ?? Random();
   final GameState state;
+  final Random _rng;
 
-  /// 修为 economy for 炼气 1/9 (MVP).
   static const int cultivationXpMax = 100;
   static const int lifespanCostPerClosure = 1;
   static const int xpPerClosure = 1;
@@ -21,12 +24,9 @@ class CultivationEngine {
   static const double baseBreakthroughRate = 0.80;
   static const double heartAlignmentBonus = 0.10;
 
-  // For deterministic tests; production uses a real Random.
-  final Random _rng = Random();
-
-  int get cultivationXp => _xp;
-  int _xp = 0;
-  set cultivationXp(int v) => _xp = v.clamp(0, cultivationXpMax);
+  int get cultivationXp => state.player.cultivationXp;
+  set cultivationXp(int v) =>
+      state.player.cultivationXp = v.clamp(0, cultivationXpMax);
 
   void startClosure() {
     state.startClosure();
@@ -35,7 +35,8 @@ class CultivationEngine {
   void completeClosure() {
     state.completeClosure();
     // 修为 +1
-    _xp = (_xp + xpPerClosure).clamp(0, cultivationXpMax);
+    state.player.cultivationXp =
+        (state.player.cultivationXp + xpPerClosure).clamp(0, cultivationXpMax);
     // 寿元 -1 月 (decisions.md #12)
     state.player.lifespan =
         (state.player.lifespan - lifespanCostPerClosure).clamp(0, 1 << 30);
@@ -45,7 +46,7 @@ class CultivationEngine {
       state.player.lifespan = GameState.closureLifespanMaxLianQi ~/ 2;
     }
     // 满 修为 → 突破 IF
-    if (_xp >= cultivationXpMax) {
+    if (state.player.cultivationXp >= cultivationXpMax) {
       _resolveBreakthrough();
     }
     state.notifyListeners();
@@ -57,10 +58,11 @@ class CultivationEngine {
     if (roll < rate || state.forceSuccess) {
       // success
       state.player.layer = (state.player.layer + 1).clamp(1, 9);
-      _xp = 0;
+      state.player.cultivationXp = 0;
     } else {
       // fail: -30% 修为, 寿元 -1 月 (decisions.md #14)
-      _xp = (_xp * 0.70).floor();
+      state.player.cultivationXp =
+          (state.player.cultivationXp * 0.70).floor();
       state.player.lifespan =
           (state.player.lifespan - 1).clamp(0, 1 << 30);
     }
