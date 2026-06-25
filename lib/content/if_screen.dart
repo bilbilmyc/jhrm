@@ -1,5 +1,7 @@
 // IfScreen: 修真感排版. Body is 古风 paragraph; choices are ink-on-paper
-// buttons; back button is a corner ornament.
+// buttons; back button is a corner ornament. If a choice has
+// `action: tribulation`, the caller is notified via `onTribulationChoice`
+// so it can run the engine and show the outcome screen.
 
 import 'package:flutter/material.dart';
 
@@ -16,12 +18,14 @@ class IfScreen extends StatelessWidget {
     required this.segment,
     required this.onExit,
     this.onNavigate,
+    this.onTribulationChoice,
   });
 
   final GameState state;
   final IfSegment segment;
   final VoidCallback onExit;
   final ValueChanged<IfSegment>? onNavigate;
+  final ValueChanged<IfChoice>? onTribulationChoice;
 
   void _applyChoice(IfChoice c) {
     for (final e in c.heartDelta.entries) {
@@ -114,7 +118,11 @@ class IfScreen extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed: () {
                           _applyChoice(c);
-                          onNavigate?.call(segment);
+                          if (c.action == 'tribulation') {
+                            onTribulationChoice?.call(c);
+                          } else {
+                            onNavigate?.call(segment);
+                          }
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: XianxiaTheme.inkBlack,

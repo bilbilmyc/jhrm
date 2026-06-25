@@ -15,16 +15,22 @@ class IfTrigger {
 class IfChoice {
   const IfChoice({
     required this.choice,
-    required this.goto,
+    this.goto,
+    this.action = 'goto',
     this.heartDelta = const {},
   });
   final String choice;
   final String? goto;
+
+  /// 'goto' (default, follow `goto`) or 'tribulation' (fire TribulationEngine
+  /// then return to caller for outcome rendering).
+  final String action;
   final Map<HeartPath, int> heartDelta;
 
   Map<String, dynamic> toJson() => {
         'choice': choice,
         'goto': goto,
+        'action': action,
         'heart_delta': {for (final e in heartDelta.entries) e.key.name: e.value},
       };
 
@@ -33,8 +39,6 @@ class IfChoice {
     final map = <HeartPath, int>{};
     if (hd != null) {
       hd.forEach((k, v) {
-        // Try enum name first (e.g. 'swordDao'), then display name
-        // (e.g. '剑道' — the canonical Chinese term from CONTEXT.md).
         HeartPath? resolved;
         for (final p in HeartPath.values) {
           if (p.name == k || p.displayName == k) {
@@ -50,6 +54,7 @@ class IfChoice {
     return IfChoice(
       choice: j['choice'] as String,
       goto: j['goto'] as String?,
+      action: (j['action'] as String?) ?? 'goto',
       heartDelta: map,
     );
   }

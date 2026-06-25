@@ -42,12 +42,8 @@ class _WorldViewState extends State<WorldView>
   bool _tribulationInProgress = false;
   TribulationResult? _tribulationResult;
 
-  // Closure (闭关闭环): a 30s real-time timer driven by an AnimationController.
   late final AnimationController _closureController;
   bool _closureRunning = false;
-
-  // 突破 画面: a brief screen shown after a successful 小层 breakthrough
-  // (not a 渡劫 — that's a different event).
   bool? _breakthroughSuccess;
 
   @override
@@ -108,7 +104,6 @@ class _WorldViewState extends State<WorldView>
     setState(() {
       _closureRunning = false;
     });
-    // Detect 小层 breakthrough (success path bumps layer within same realm).
     if (widget.state.player.realm == beforeRealm &&
         widget.state.player.layer > beforeLayer) {
       setState(() => _breakthroughSuccess = true);
@@ -126,18 +121,37 @@ class _WorldViewState extends State<WorldView>
   void _checkTribulation() {
     final p = widget.state.player;
     if (p.layer >= 9 && p.cultivationXp >= CultivationEngine.cultivationXpMax) {
-      setState(() => _tribulationInProgress = true);
-      final result = TribulationEngine(widget.state).resolve();
-      setState(() {
-        _tribulationInProgress = false;
-        _tribulationResult = result;
-        if (result == TribulationResult.failure) {
-          p.cultivationXp = 0;
-        }
-      });
-      if (widget.saveService != null) {
-        widget.saveService!.save(widget.state);
+      // Find the 渡劫 IF segment from content (loaded by ContentLoader).
+      // If we have it, show it; otherwise roll directly.
+      final seg = widget.contentLoader?.firstForLocation('渡劫台');
+      if (seg != null && seg.next.isNotEmpty) {
+        setState(() => _activeSegment = seg);
+      } else {
+        _resolveTribulationDirect();
       }
+    }
+  }
+
+  void _onTribulationChoice(IfChoice c) {
+    // Apply heart_delta was already done by IfScreen; now resolve.
+    _resolveTribulationDirect();
+  }
+
+  void _resolveTribulationDirect() {
+    setState(() {
+      _activeSegment = null;
+      _tribulationInProgress = true;
+    });
+    final result = TribulationEngine(widget.state).resolve();
+    setState(() {
+      _tribulationInProgress = false;
+      _tribulationResult = result;
+      if (result == TribulationResult.failure) {
+        widget.state.player.cultivationXp = 0;
+      }
+    });
+    if (widget.saveService != null) {
+      widget.saveService!.save(widget.state);
     }
   }
 
@@ -152,6 +166,7 @@ class _WorldViewState extends State<WorldView>
         state: widget.state,
         segment: _activeSegment!,
         onExit: _exitIf,
+        onTribulationChoice: _onTribulationChoice,
       );
     }
     if (_breakthroughSuccess != null) {
