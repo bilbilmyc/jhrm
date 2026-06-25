@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'content/content_loader.dart';
 import 'save/save_service.dart';
 import 'state/game_state.dart';
+import 'ui/character_creation.dart';
 import 'ui/gold_finger_overlay.dart';
 import 'world/world_view.dart';
 
@@ -32,7 +33,7 @@ void main() async {
   ));
 }
 
-class JhrmApp extends StatelessWidget {
+class JhrmApp extends StatefulWidget {
   const JhrmApp({
     super.key,
     required this.state,
@@ -46,21 +47,29 @@ class JhrmApp extends StatelessWidget {
   final bool enableGoldFinger;
 
   @override
+  State<JhrmApp> createState() => _JhrmAppState();
+}
+
+class _JhrmAppState extends State<JhrmApp> {
+  @override
   Widget build(BuildContext context) {
+    final home = widget.state.characterCreated
+        ? WorldView(
+            state: widget.state,
+            saveService: widget.saveService,
+            contentLoader: widget.contentLoader,
+          )
+        : CharacterCreation(
+            state: widget.state,
+            onDone: () => setState(() {}),
+          );
     return MaterialApp(
       title: '修真',
       theme: ThemeData(
         colorSchemeSeed: Colors.amber,
         useMaterial3: true,
       ),
-      home: GoldFingerOverlay(
-        state: state,
-        child: WorldView(
-          state: state,
-          saveService: saveService,
-          contentLoader: contentLoader,
-        ),
-      ),
+      home: GoldFingerOverlay(state: widget.state, child: home),
     );
   }
 }

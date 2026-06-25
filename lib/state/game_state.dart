@@ -33,6 +33,10 @@ class GameState extends ChangeNotifier {
   /// null while playing. Format: 'ascended-<heartPathName>' (e.g. ascended-swordDao).
   String? ending;
 
+  /// True once the player has completed character creation (slice 11).
+  /// The first-launch flow routes to CharacterCreation when this is false.
+  bool characterCreated = false;
+
   /// 30s 闭关 = 1 month 寿元 (decisions.md #12, MVP only)
   static const int closureLifespanCost = 1;
   static const int closureLifespanMaxLianQi = 1200; // 100 years * 12
