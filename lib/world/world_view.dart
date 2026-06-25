@@ -6,6 +6,7 @@ import '../content/content_loader.dart';
 import '../content/if_screen.dart';
 import '../content/if_segment.dart';
 import '../engine/cultivation_engine.dart';
+import '../engine/ending_resolver.dart';
 import '../engine/tribulation_engine.dart';
 import '../save/save_service.dart';
 import '../state/enums.dart' as domain;
@@ -135,15 +136,37 @@ class _WorldViewState extends State<WorldView>
   void _checkTribulation() {
     final p = widget.state.player;
     if (p.layer >= 9 && p.cultivationXp >= CultivationEngine.cultivationXpMax) {
-      // Find the 渡劫 IF segment from content (loaded by ContentLoader).
-      // If we have it, show it; otherwise roll directly.
-      final seg = widget.contentLoader?.firstForLocation('渡劫台');
+      // Find the 渡劫 IF for this realm. Per-plane tribulation IFs are
+      // distinguished by trigger.on_realm; fallback to first 渡劫台 match
+      // for legacy content (the 炼气→筑基 IF was authored before this
+      // routing was added).
+      final seg = _findTribulationFor(p.realm);
       if (seg != null && seg.next.isNotEmpty) {
         setState(() => _activeSegment = seg);
       } else {
         _resolveTribulationDirect();
       }
     }
+  }
+
+  IfSegment? _findTribulationFor(domain.Realm realm) {
+    final loader = widget.contentLoader;
+    if (loader == null) return null;
+    final realmName = '${realm.displayName}期';
+    for (final s in loader.all()) {
+      if (s.trigger.location != '渡劫台') continue;
+      // IfTrigger currently has no on_realm field; the new IF segments
+      // store it in `requires.realm` (already a Map<String, dynamic>).
+      // Legacy IFs (炼气→筑基) only have `location`, no realm hint.
+      final reqRealm = s.requires['realm'] as String?;
+      if (reqRealm == null) {
+        // Legacy: assume 炼气期.
+        if (realm == domain.Realm.lianQi) return s;
+      } else if (reqRealm == realmName) {
+        return s;
+      }
+    }
+    return null;
   }
 
   void _onTribulationChoice(IfChoice c) {
@@ -171,8 +194,50 @@ class _WorldViewState extends State<WorldView>
     setState(() => _tribulationResult = null);
   }
 
+  void _exitEnding() {
+    // The player read the ending — restart the journey at 炼气 1/9.
+    // Reset player fields in place so the existing GameState reference
+    // (and its listeners) stays valid.
+    setState(() {
+      _activeSegment = null;
+      _tribulationResult = null;
+    });
+    widget.state.player.realm = domain.Realm.lianQi;
+    widget.state.player.layer = 1;
+    widget.state.player.lifespan = GameState.closureLifespanMaxLianQi;
+    widget.state.player.lifespanMax = GameState.closureLifespanMaxLianQi;
+    widget.state.player.cultivationXp = 0;
+    widget.state.ending = null;
+    widget.state.notify();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Auto-route to the realm-appropriate tribulation IF whenever the
+    // state is ready (layer 9 + xp full). This is idempotent — once the
+    // IF is dismissed, the player either ascended (state.ending set) or
+    // failed (xp reset) and the precondition is no longer met.
+    if (_activeSegment == null &&
+        widget.state.ending == null &&
+        widget.state.player.layer >= 9 &&
+        widget.state.player.cultivationXp >=
+            CultivationEngine.cultivationXpMax) {
+      _checkTribulation();
+    }
+    // Ascension: state.ending is set after a successful tribulation at
+    // 大乘 9/9. Resolve to a canonical ending IF and show it.
+    if (widget.state.ending != null) {
+      final endingId = EndingResolver.pick(widget.state);
+      final seg = widget.contentLoader?.get(endingId);
+      if (seg != null) {
+        return IfScreen(
+          state: widget.state,
+          segment: seg,
+          onExit: _exitEnding,
+        );
+      }
+      // Fallback: no content loader or segment missing → show generic view.
+    }
     if (_activeSegment != null) {
       return IfScreen(
         state: widget.state,
@@ -206,10 +271,11 @@ class _WorldViewState extends State<WorldView>
         },
       );
     }
-    final nodes = NodeRegistry.mortalNodes;
+    final nodes = NodeRegistry.nodesFor(widget.state.player.realm);
+    final planeName = _planeNameFor(widget.state.player.realm);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('凡 界'),
+        title: Text(planeName),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(
@@ -287,6 +353,20 @@ class _WorldViewState extends State<WorldView>
         ),
       ),
     );
+  }
+
+  String _planeNameFor(domain.Realm realm) {
+    switch (realm) {
+      case domain.Realm.lianQi:
+      case domain.Realm.zhuJi:
+        return '凡 界';
+      case domain.Realm.jinDan:
+      case domain.Realm.yuanYing:
+        return '灵 界';
+      case domain.Realm.huaShen:
+      case domain.Realm.daCheng:
+        return '仙 界';
+    }
   }
 }
 
