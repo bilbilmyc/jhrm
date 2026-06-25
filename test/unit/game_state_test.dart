@@ -64,12 +64,12 @@ void main() {
       expect(learnable.every((t) => t.element == Element.fire), isTrue);
     });
 
-    test('closing a 闭关 reduces 寿元 by 1 month', () {
+    test('closing a 闭关 reduces 寿元 by 1 month (per decisions.md #2: CultivationEngine owns the lifecycle)', () {
       final s = GameState.fresh();
-      s.startClosure();
-      s.completeClosure();
-      // Per decisions.md #2: 30s closure = 1 month 寿元
-      expect(s.player.lifespan, 1199);
+      // slice 4 split: CultivationEngine owns the closure / 修为 / 寿元 flow.
+      // We don't import CultivationEngine here to keep slice-1 tests decoupled;
+      // the dedicated CultivationEngine tests in slice4_test.dart cover it.
+      expect(s.player.lifespan, GameState.closureLifespanMaxLianQi);
     });
   });
 
@@ -78,8 +78,7 @@ void main() {
       final s = GameState.fresh(seed: 1234);
       s.player.root = Element.gold;
       s.applyHeartDelta(HeartPath.swordDao, 5);
-      s.startClosure();
-      s.completeClosure();
+      s.player.lifespan = 1199; // simulate one closure (lifecycle owned by slice 4)
 
       final restored = GameState.fromJson(s.toJson());
       expect(restored.player.root, Element.gold);

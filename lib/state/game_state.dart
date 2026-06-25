@@ -25,6 +25,10 @@ class GameState extends ChangeNotifier {
   final IfState ifState;
   final ProceduralSeed seed;
 
+  /// Gold-finger flag: forces 100% success on next breakthrough / tribulation.
+  /// Cleared after one use so gold-finger doesn't permanently break balance.
+  bool forceSuccess = false;
+
   /// 30s 闭关 = 1 month 寿元 (decisions.md #12, MVP only)
   static const int closureLifespanCost = 1;
   static const int closureLifespanMaxLianQi = 1200; // 100 years * 12
@@ -45,6 +49,7 @@ class GameState extends ChangeNotifier {
   // === Lifecycle hooks for engines / UI ===
 
   /// 闭关 in progress; tracked here so multiple subsystems can observe.
+  /// CultivationEngine is the owner of all 修为 / 寿元 / 突破 transitions.
   bool _isClosing = false;
   bool get isClosing => _isClosing;
 
@@ -55,8 +60,6 @@ class GameState extends ChangeNotifier {
   void completeClosure() {
     if (!_isClosing) return;
     _isClosing = false;
-    player.lifespan -= closureLifespanCost;
-    if (player.lifespan < 0) player.lifespan = 0;
     notifyListeners();
   }
 
