@@ -30,7 +30,7 @@ class GameState extends ChangeNotifier {
   bool forceSuccess = false;
 
   /// Recorded on ascension (decisions.md #5: 飞升 success = 通关).
-  /// null while playing. Format: 'ascended-<heartPathName>' (e.g. ascended-swordDao).
+  /// null while playing. Format: `'ascended-<heartPathName>'` (e.g. `ascended-swordDao`).
   String? ending;
 
   /// True once the player has completed character creation (slice 11).
@@ -75,6 +75,59 @@ class GameState extends ChangeNotifier {
     final current = player.heartVector[path] ?? 0;
     player.heartVector[path] = current + delta;
     notifyListeners();
+  }
+
+  /// Reset all mutable state to fresh values (mirrors `GameState.fresh()` but
+  /// mutates in place so existing references — listeners, UI bound to this
+  /// instance — stay valid). Used by gold-finger reset-save and by the
+  /// tribulation restart path.
+  ///
+  /// Clears: realm/layer/lifespan/cultivationXp/root/heartVector/karma on
+  /// Player; world.selectedNodeId; ifState.history + currentSegmentId;
+  /// ending + forceSuccess + characterCreated.
+  void resetToFresh() {
+    player.realm = Realm.lianQi;
+    player.layer = 1;
+    player.lifespan = closureLifespanMaxLianQi;
+    player.lifespanMax = closureLifespanMaxLianQi;
+    player.cultivationXp = 0;
+    player.root = Element.fire;
+    for (final k in player.heartVector.keys.toList()) {
+      player.heartVector[k] = 0;
+    }
+    player.equipment = const [];
+    player.elixirs = const [];
+    player.beasts = const [];
+    player.companion = null;
+    player.factionRep = const {};
+    player.disciples = const [];
+    player.activeWorldEvent = null;
+    player.reincarnation = null;
+    player.karma = 0;
+    world.selectedNodeId = null;
+    ifState.currentSegmentId = null;
+    ifState.history = [];
+    ending = null;
+    forceSuccess = false;
+    characterCreated = false;
+    _isClosing = false;
+    notify();
+  }
+
+  /// Public notification entry point. `notifyListeners` is `@protected` in
+  /// Flutter's ChangeNotifier, which forbids calls from engines / UI that
+  /// hold a `GameState` but aren't subclasses. Engines and widgets that
+  /// mutate the state call this method instead.
+  void notify() => notifyListeners();
+
+  /// Atomically read `forceSuccess` and clear it. Returns the prior value.
+  /// Engines that resolve a breakthrough / tribulation call this exactly
+  /// once at the resolution point so the gold-finger flag doesn't
+  /// permanently bypass the random roll.
+  bool consumeForceSuccess() {
+    if (!forceSuccess) return false;
+    forceSuccess = false;
+    return true;
   }
 
   // === JSON round-trip (decisions.md #11) ===

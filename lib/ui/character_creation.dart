@@ -67,7 +67,7 @@ class _CharacterCreationState extends State<CharacterCreation> {
                       ? null
                       : () {
                           widget.state.characterCreated = true;
-                          widget.state.notifyListeners();
+                          widget.state.notify();
                           widget.onDone();
                         },
                   child: const Padding(
@@ -94,14 +94,14 @@ class _CharacterCreationState extends State<CharacterCreation> {
       onTap: () {
         setState(() => _picked = e);
         widget.state.player.root = e;
-        widget.state.notifyListeners();
+        widget.state.notify();
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         width: 96,
         height: 110,
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.15) : XianxiaTheme.paperWhite,
+          color: selected ? color.withValues(alpha: 0.15) : XianxiaTheme.paperWhite,
           border: Border.all(
             color: selected ? color : XianxiaTheme.shadowBrown,
             width: selected ? 2 : 0.5,

@@ -2,8 +2,6 @@
 // Tap the 闭关 button → overlay shows a 30s timer → on complete, fires
 // CultivationEngine.completeClosure + 寿元 扣除 + 可能触发 突破.
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../engine/cultivation_engine.dart';
@@ -74,7 +72,7 @@ class _ClosureTimerState extends State<ClosureTimer>
       label: _running
           ? AnimatedBuilder(
               animation: _controller,
-              builder: (_, __) {
+              builder: (_, _) {
                 final remaining = (_secondsLianQi * (1 - _controller.value)).ceil();
                 return Text('闭关中 $remaining s');
               },

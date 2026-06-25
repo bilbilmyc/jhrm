@@ -116,7 +116,7 @@ class StatusBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         border: Border.all(color: color, width: 1),
         borderRadius: BorderRadius.circular(2),
       ),
@@ -141,7 +141,7 @@ class StatusBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: active ? color.withOpacity(0.25) : Colors.transparent,
+        color: active ? color.withValues(alpha: 0.25) : Colors.transparent,
         border: Border.all(
           color: active ? color : XianxiaTheme.shadowBrown,
           width: active ? 1.2 : 0.5,

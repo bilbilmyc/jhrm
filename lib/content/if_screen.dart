@@ -32,7 +32,7 @@ class IfScreen extends StatelessWidget {
       state.applyHeartDelta(e.key, e.value);
     }
     state.ifState.history.add(segment.id);
-    state.notifyListeners();
+    state.notify();
   }
 
   @override
@@ -65,7 +65,7 @@ class IfScreen extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: XianxiaTheme.paperWhite.withOpacity(0.85),
+                        color: XianxiaTheme.paperWhite.withValues(alpha: 0.85),
                         border: Border.all(
                           color: XianxiaTheme.shadowBrown,
                           width: 0.5,

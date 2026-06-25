@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jhrm/engine/gold_finger.dart';
-import 'package:jhrm/state/enums.dart';
 import 'package:jhrm/state/game_state.dart';
 import 'package:jhrm/ui/gold_finger_overlay.dart';
 

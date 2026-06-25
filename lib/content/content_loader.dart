@@ -12,7 +12,7 @@ class ContentLoader {
   final Map<String, IfSegment> _byId;
 
   /// Parse a single string containing one or more .md segments.
-  /// In production the AppAssetLoader reads from content/凡界/<node>/*.md.
+  /// In production the AppAssetLoader reads from `content/凡界/<node>/*.md`.
   factory ContentLoader.fromString(String source) {
     final byId = <String, IfSegment>{};
     final parts = source.split(RegExp(r'^---\s*$', multiLine: true));
@@ -74,7 +74,7 @@ class ContentLoader {
   }
 
   /// Convert yaml package's recursive YamlMap/YamlList into plain Map/List.
-  /// Necessary because IfSegment.fromJson expects Map<String, dynamic>.
+  /// Necessary because IfSegment.fromJson expects `Map<String, dynamic>`.
   static dynamic _yamlToJson(dynamic v) {
     if (v is YamlMap) {
       return {for (final e in v.entries) e.key as String: _yamlToJson(e.value)};

@@ -34,7 +34,9 @@ class TribulationEngine {
   TribulationResult resolve() {
     final rate = computeSuccessRate();
     final roll = _rng.nextDouble();
-    if (roll < rate || state.forceSuccess) {
+    // Force is consumed unconditionally — see cultivation_engine note.
+    final force = state.consumeForceSuccess();
+    if (roll < rate || force) {
       _applySuccess();
       return TribulationResult.success;
     } else {
@@ -53,7 +55,7 @@ class TribulationEngine {
     // 记录 ending
     final topPath = _topHeartPath();
     state.ending = 'ascended-${topPath.name}';
-    state.notifyListeners();
+    state.notify();
   }
 
   void _applyFailure() {
@@ -64,7 +66,7 @@ class TribulationEngine {
     final half = GameState.closureLifespanMaxLianQi ~/ 2;
     state.player.lifespan = half;
     state.player.lifespanMax = GameState.closureLifespanMaxLianQi;
-    state.notifyListeners();
+    state.notify();
   }
 
   HeartPath _topHeartPath() {

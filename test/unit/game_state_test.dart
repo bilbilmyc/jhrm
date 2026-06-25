@@ -8,10 +8,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jhrm/state/enums.dart';
 import 'package:jhrm/state/game_state.dart';
-import 'package:jhrm/state/player.dart';
-import 'package:jhrm/state/world.dart';
-import 'package:jhrm/state/if_state.dart';
-import 'package:jhrm/state/procedural_seed.dart';
 
 void main() {
   group('GameState creation', () {
@@ -127,6 +123,43 @@ void main() {
         a.player.learnableTechniques().map((t) => t.id),
         equals(b.player.learnableTechniques().map((t) => t.id)),
       );
+    });
+  });
+
+  group('GameState public notify (slice 17: notifyListeners is protected)', () {
+    test('notify() fires registered listeners exactly once', () {
+      final s = GameState.fresh();
+      var calls = 0;
+      s.addListener(() => calls++);
+      s.notify();
+      expect(calls, 1);
+    });
+
+    test('notify() can be called from outside the class (public API)',
+        () {
+      // Smoke: this would be a compile error if notify() weren't public.
+      // The lint rule `invalid_use_of_protected_member` only allows calls
+      // from inside the class or a subclass, but `notify()` is a regular
+      // public method so external code can call it.
+      final s = GameState.fresh();
+      expect(() => s.notify(), returnsNormally);
+    });
+  });
+
+  group('GameState forceSuccess consume (slice 20)', () {
+    test('consumeForceSuccess returns true once then clears to false', () {
+      final s = GameState.fresh();
+      s.forceSuccess = true;
+      expect(s.consumeForceSuccess(), isTrue);
+      expect(s.forceSuccess, isFalse, reason: 'consume must clear the flag');
+      expect(s.consumeForceSuccess(), isFalse,
+          reason: 'second consume returns false (flag already cleared)');
+    });
+
+    test('consumeForceSuccess on a fresh state returns false', () {
+      final s = GameState.fresh();
+      expect(s.consumeForceSuccess(), isFalse);
+      expect(s.forceSuccess, isFalse);
     });
   });
 }

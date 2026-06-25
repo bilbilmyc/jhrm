@@ -1,7 +1,5 @@
 // WorldView: 修真感 list + 2D map. 节点 cards use element glyph + 灵气 ring.
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../content/content_loader.dart';
@@ -39,7 +37,6 @@ class _WorldViewState extends State<WorldView>
     with SingleTickerProviderStateMixin {
   int _tab = 0;
   IfSegment? _activeSegment;
-  bool _tribulationInProgress = false;
   TribulationResult? _tribulationResult;
 
   late final AnimationController _closureController;
@@ -67,7 +64,7 @@ class _WorldViewState extends State<WorldView>
       orElse: () => NodeRegistry.mortalNodes.first,
     );
     widget.state.world.selectedNodeId = node.id;
-    widget.state.notifyListeners();
+    widget.state.notify();
     final loader = widget.contentLoader;
     if (loader == null) return;
     final seg = loader.firstForLocation(nodeName);
@@ -157,11 +154,9 @@ class _WorldViewState extends State<WorldView>
   void _resolveTribulationDirect() {
     setState(() {
       _activeSegment = null;
-      _tribulationInProgress = true;
     });
     final result = TribulationEngine(widget.state).resolve();
     setState(() {
-      _tribulationInProgress = false;
       _tribulationResult = result;
       if (result == TribulationResult.failure) {
         widget.state.player.cultivationXp = 0;
@@ -207,7 +202,7 @@ class _WorldViewState extends State<WorldView>
           widget.state.player.lifespanMax = GameState.closureLifespanMaxLianQi;
           widget.state.player.cultivationXp = 0;
           widget.state.ending = null;
-          widget.state.notifyListeners();
+          widget.state.notify();
         },
       );
     }
@@ -317,7 +312,7 @@ class _ClosureFab extends StatelessWidget {
       label: running
           ? AnimatedBuilder(
               animation: controller,
-              builder: (_, __) {
+              builder: (_, _) {
                 final remaining = (30 * (1 - controller.value)).ceil();
                 return Text('闭关 $remaining s');
               },
@@ -380,7 +375,7 @@ class _NodeCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: XianxiaTheme.paperWhite.withOpacity(0.85),
+            color: XianxiaTheme.paperWhite.withValues(alpha: 0.85),
             border: Border.all(
               color: selected ? XianxiaTheme.cinnabarRed : XianxiaTheme.shadowBrown,
               width: selected ? 1.5 : 0.5,
@@ -394,7 +389,7 @@ class _NodeCard extends StatelessWidget {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: elementColor.withOpacity(0.15),
+                  color: elementColor.withValues(alpha: 0.15),
                   border: Border.all(color: elementColor, width: 1),
                   shape: BoxShape.circle,
                 ),

@@ -30,12 +30,12 @@ class MiniMap extends StatelessWidget {
             Positioned(
               left: w * 0.05,
               bottom: -h * 0.1,
-              child: _mountain(h * 0.5, w * 0.5, XianxiaTheme.shadowBrown.withOpacity(0.18)),
+              child: _mountain(h * 0.5, w * 0.5, XianxiaTheme.shadowBrown.withValues(alpha: 0.18)),
             ),
             Positioned(
               right: w * 0.05,
               bottom: -h * 0.15,
-              child: _mountain(h * 0.55, w * 0.55, XianxiaTheme.shadowBrown.withOpacity(0.14)),
+              child: _mountain(h * 0.55, w * 0.55, XianxiaTheme.shadowBrown.withValues(alpha: 0.14)),
             ),
             for (final n in nodes)
               Positioned(
@@ -45,7 +45,7 @@ class MiniMap extends StatelessWidget {
                   key: Key('map-node-${n.id}'),
                   onTap: () {
                     state.world.selectedNodeId = n.id;
-                    state.notifyListeners();
+                    state.notify();
                     onNodeTapped?.call(n.name);
                   },
                   child: _mapNode(n),
@@ -87,7 +87,7 @@ class MiniMap extends StatelessWidget {
             ),
             shape: BoxShape.circle,
             boxShadow: selected
-                ? [BoxShadow(color: color.withOpacity(0.4), blurRadius: 6, spreadRadius: 2)]
+                ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 6, spreadRadius: 2)]
                 : null,
           ),
           child: Text(
@@ -102,7 +102,7 @@ class MiniMap extends StatelessWidget {
         const SizedBox(height: 2),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-          color: XianxiaTheme.paperWhite.withOpacity(0.8),
+          color: XianxiaTheme.paperWhite.withValues(alpha: 0.8),
           child: Text(
             n.name,
             style: const TextStyle(

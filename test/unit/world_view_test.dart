@@ -12,9 +12,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jhrm/state/enums.dart';
 import 'package:jhrm/state/game_state.dart';
-import 'package:jhrm/world/node.dart';
 import 'package:jhrm/world/node_registry.dart';
 import 'package:jhrm/world/world_view.dart';
 

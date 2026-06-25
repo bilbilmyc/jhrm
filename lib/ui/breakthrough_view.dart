@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../state/enums.dart' as domain;
 import '../state/game_state.dart';
 import 'theme.dart';
 

@@ -6,13 +6,20 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../engine/gold_finger.dart';
+import '../save/save_service.dart';
 import '../state/game_state.dart';
 import 'theme.dart';
 
 class GoldFingerOverlay extends StatefulWidget {
-  const GoldFingerOverlay({super.key, required this.state, required this.child});
+  const GoldFingerOverlay({
+    super.key,
+    required this.state,
+    required this.child,
+    this.saveService,
+  });
   final GameState state;
   final Widget child;
+  final SaveService? saveService;
 
   @override
   State<GoldFingerOverlay> createState() => _GoldFingerOverlayState();
@@ -29,7 +36,14 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
   }
 
   void _dispatch(GoldAction a) {
-    _gf.action(a);
+    if (a == GoldAction.resetSave) {
+      // Delete the on-disk save and reset in-memory state to fresh.
+      // The engine stub is a noop for resetSave; the wiring lives here.
+      widget.saveService?.delete();
+      widget.state.resetToFresh();
+    } else {
+      _gf.action(a);
+    }
     setState(() => _open = false);
   }
 
@@ -100,32 +114,41 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
                   ),
                   const SizedBox(height: 16),
                   XianxiaTheme.sealDivider(),
-                  for (final a in _menuItems())
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: () => _dispatch(a),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: XianxiaTheme.inkBlack,
-                            side: const BorderSide(
-                              color: XianxiaTheme.shadowBrown,
-                              width: 0.5,
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (final a in _menuItems())
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: () => _dispatch(a),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: XianxiaTheme.inkBlack,
+                                    side: const BorderSide(
+                                      color: XianxiaTheme.shadowBrown,
+                                      width: 0.5,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    alignment: Alignment.centerLeft,
+                                  ),
+                                  child: Text(
+                                    _labelFor(a),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            alignment: Alignment.centerLeft,
-                          ),
-                          child: Text(
-                            _labelFor(a),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
+                        ],
                       ),
                     ),
+                  ),
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => setState(() => _open = false),
@@ -152,6 +175,7 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
         GoldAction.karmaPlus10,
         GoldAction.lifespanPlus10,
         GoldAction.tribulationSuccess,
+        GoldAction.resetSave,
       ];
 
   String _labelFor(GoldAction a) {
@@ -170,6 +194,8 @@ class _GoldFingerOverlayState extends State<GoldFingerOverlay> {
         return '+10 寿元';
       case GoldAction.tribulationSuccess:
         return '强渡天劫';
+      case GoldAction.resetSave:
+        return '重置存档';
       default:
         return a.name;
     }

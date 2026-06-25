@@ -99,6 +99,6 @@ class GoldFinger {
       case GoldAction.exit:
         break;
     }
-    state.notifyListeners();
+    state.notify();
   }
 }

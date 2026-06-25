@@ -8,7 +8,6 @@
 
 import 'dart:math';
 
-import '../state/enums.dart';
 import '../state/game_state.dart';
 
 class CultivationEngine {
@@ -49,13 +48,16 @@ class CultivationEngine {
     if (state.player.cultivationXp >= cultivationXpMax) {
       _resolveBreakthrough();
     }
-    state.notifyListeners();
+    state.notify();
   }
 
   void _resolveBreakthrough() {
     final rate = _currentBreakthroughRate();
     final roll = _rng.nextDouble();
-    if (roll < rate || state.forceSuccess) {
+    // Force is consumed unconditionally so a high roll (which would
+    // short-circuit an `||` and skip the consume) still clears the flag.
+    final force = state.consumeForceSuccess();
+    if (roll < rate || force) {
       // success
       state.player.layer = (state.player.layer + 1).clamp(1, 9);
       state.player.cultivationXp = 0;
