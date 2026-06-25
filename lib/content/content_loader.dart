@@ -1,5 +1,7 @@
 // ContentLoader: parses .md files with YAML frontmatter into IfSegment map.
-// MVP: in-memory only. File-system loader arrives in slice 7.
+// File-system loader reads recursively from a directory (e.g. content/凡界/).
+
+import 'dart:io';
 
 import 'package:yaml/yaml.dart';
 
@@ -36,6 +38,40 @@ class ContentLoader {
   IfSegment? get(String id) => _byId[id];
   Iterable<IfSegment> all() => _byId.values;
   int get length => _byId.length;
+
+  /// Returns the first segment whose trigger.location matches [location].
+  IfSegment? firstForLocation(String location) {
+    for (final s in _byId.values) {
+      if (s.trigger.location == location) return s;
+    }
+    return null;
+  }
+
+  /// Walk a directory tree and parse every .md file found.
+  /// Used at app launch to load content/凡界/ etc.
+  factory ContentLoader.fromDirectory(Directory dir) {
+    final byId = <String, IfSegment>{};
+    if (!dir.existsSync()) return ContentLoader._(byId);
+    void walk(Directory d) {
+      for (final entry in d.listSync()) {
+        if (entry is Directory) {
+          walk(entry);
+        } else if (entry is File && entry.path.endsWith('.md')) {
+          try {
+            final source = entry.readAsStringSync();
+            final inner = ContentLoader.fromString(source);
+            for (final s in inner.all()) {
+              byId[s.id] = s;
+            }
+          } catch (_) {
+            // Skip unreadable files.
+          }
+        }
+      }
+    }
+    walk(dir);
+    return ContentLoader._(byId);
+  }
 
   /// Convert yaml package's recursive YamlMap/YamlList into plain Map/List.
   /// Necessary because IfSegment.fromJson expects Map<String, dynamic>.

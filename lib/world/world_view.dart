@@ -1,17 +1,27 @@
 // WorldView: top-level 凡界 screen with list + 2D map tabs.
-// Per slice 2: tap node records selection in GameState.
+// Per slice 2: tap node records selection.
+// Per slice 8: tap node opens the first matching IF segment on top.
 
 import 'package:flutter/material.dart';
 
+import '../content/content_loader.dart';
+import '../content/if_screen.dart';
+import '../content/if_segment.dart';
 import '../save/save_service.dart';
 import '../state/game_state.dart';
 import 'mini_map.dart';
 import 'node_registry.dart';
 
 class WorldView extends StatefulWidget {
-  const WorldView({super.key, required this.state, this.saveService});
+  const WorldView({
+    super.key,
+    required this.state,
+    this.saveService,
+    this.contentLoader,
+  });
   final GameState state;
   final SaveService? saveService;
+  final ContentLoader? contentLoader;
 
   @override
   State<WorldView> createState() => _WorldViewState();
@@ -19,9 +29,35 @@ class WorldView extends StatefulWidget {
 
 class _WorldViewState extends State<WorldView> {
   int _tab = 0;
+  IfSegment? _activeSegment;
+
+  void _onNodeTapped(String nodeName) {
+    final loader = widget.contentLoader;
+    if (loader == null) {
+      // No content loader wired: fall back to selection only.
+      return;
+    }
+    final seg = loader.firstForLocation(nodeName);
+    if (seg == null) return;
+    setState(() => _activeSegment = seg);
+  }
+
+  void _exitIf() {
+    setState(() => _activeSegment = null);
+    if (widget.saveService != null) {
+      widget.saveService!.save(widget.state);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_activeSegment != null) {
+      return IfScreen(
+        state: widget.state,
+        segment: _activeSegment!,
+        onExit: _exitIf,
+      );
+    }
     final nodes = NodeRegistry.mortalNodes;
     return Scaffold(
       appBar: AppBar(
@@ -49,12 +85,10 @@ class _WorldViewState extends State<WorldView> {
                           trailing: widget.state.world.selectedNodeId == n.id
                               ? const Icon(Icons.check)
                               : null,
-                          onTap: () async {
+                          onTap: () {
                             widget.state.world.selectedNodeId = n.id;
                             widget.state.notifyListeners();
-                            if (widget.saveService != null) {
-                              await widget.saveService!.save(widget.state);
-                            }
+                            _onNodeTapped(n.name);
                           },
                         ),
                         const Divider(height: 1),
@@ -63,7 +97,11 @@ class _WorldViewState extends State<WorldView> {
                 ],
               ),
             )
-          : MiniMap(state: widget.state, nodes: nodes),
+          : MiniMap(
+              state: widget.state,
+              nodes: nodes,
+              onNodeTapped: _onNodeTapped,
+            ),
     );
   }
 

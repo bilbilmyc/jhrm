@@ -33,9 +33,18 @@ class IfChoice {
     final map = <HeartPath, int>{};
     if (hd != null) {
       hd.forEach((k, v) {
-        try {
-          map[HeartPath.fromName(k)] = (v as num).toInt();
-        } catch (_) {}
+        // Try enum name first (e.g. 'swordDao'), then display name
+        // (e.g. '剑道' — the canonical Chinese term from CONTEXT.md).
+        HeartPath? resolved;
+        for (final p in HeartPath.values) {
+          if (p.name == k || p.displayName == k) {
+            resolved = p;
+            break;
+          }
+        }
+        if (resolved != null) {
+          map[resolved] = (v as num).toInt();
+        }
       });
     }
     return IfChoice(

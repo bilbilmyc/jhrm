@@ -7,9 +7,15 @@ import '../state/game_state.dart';
 import 'node.dart';
 
 class MiniMap extends StatelessWidget {
-  const MiniMap({super.key, required this.state, required this.nodes});
+  const MiniMap({
+    super.key,
+    required this.state,
+    required this.nodes,
+    this.onNodeTapped,
+  });
   final GameState state;
   final List<Node> nodes;
+  final ValueChanged<String>? onNodeTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +34,7 @@ class MiniMap extends StatelessWidget {
                   onTap: () {
                     state.world.selectedNodeId = n.id;
                     state.notifyListeners();
+                    onNodeTapped?.call(n.name);
                   },
                   child: Container(
                     width: 32,
