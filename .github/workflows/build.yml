@@ -149,32 +149,23 @@ jobs:
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | head -1 | sed 's/version: *//' | cut -d+ -f1)
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+      # NOTE: the earlier attempt to use softprops's `path#label` syntax
+      # for per-asset Chinese labels did not work — the action treated
+      # the whole line as a glob pattern and reported "does not match".
+      # For now we use plain file paths; the label defaults to the
+      # filename (pinyin). If we want per-asset Chinese labels later we
+      # can switch to ncipollo/release-action or post-update via the
+      # GitHub API.
       - name: debug — list dist/ contents
         run: |
           echo "=== working dir ==="
           pwd
           echo "=== dist/ ==="
           ls -la dist/ 2>&1 || echo "dist/ does not exist"
-          echo "=== find dist/ ==="
-          find dist/ -type f 2>&1 || true
-      # Build a `files:` list with `path#label` syntax. Path = pinyin
-      # filename (ASCII only — GitHub strips non-ASCII from the
-      # filename). Label = 江湖如梦 + version + platform tag (the
-      # display name shown in the release UI).
-      - name: build release file list
-        id: filelist
-        run: |
-          VERSION="${{ steps.version.outputs.value }}"
-          {
-            echo "files<<EOF"
-            echo "dist/jhrm-${VERSION}-android-debug.apk#江湖如梦 ${VERSION} Android (debug)"
-            echo "dist/jhrm-${VERSION}-ios-unsigned.app.zip#江湖如梦 ${VERSION} iOS (unsigned)"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           generate_release_notes: true
           fail_on_unmatched_files: true
-          files: ${{ steps.filelist.outputs.files }}
+          files: dist/*
