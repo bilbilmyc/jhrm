@@ -295,20 +295,17 @@ class _WorldViewState extends State<WorldView>
       );
     }
     if (_tribulationResult != null) {
+      // 大乘成功 → state.ending != null → ending IF takes priority above
+      // and this view is never shown for ascension. So this view only
+      // ever renders mid-realm success (next realm already applied) or
+      // failure (dropped to realm 1/9). In both cases the right action
+      // is "继续" → dismiss back to the map. A "再次踏入修真路" reset
+      // button here would yank the player from 筑基 1/9 back to 炼气 1/9
+      // after a successful mid-realm tribulation.
       return _TribulationResultView(
         result: _tribulationResult!,
         state: widget.state,
         onDismiss: _dismissTribulation,
-        onRestart: () {
-          _dismissTribulation();
-          widget.state.player.realm = domain.Realm.lianQi;
-          widget.state.player.layer = 1;
-          widget.state.player.lifespan = GameState.closureLifespanMaxLianQi;
-          widget.state.player.lifespanMax = GameState.closureLifespanMaxLianQi;
-          widget.state.player.cultivationXp = 0;
-          widget.state.ending = null;
-          widget.state.notify();
-        },
       );
     }
     final nodes = NodeRegistry.nodesFor(widget.state.player.realm);
@@ -585,20 +582,20 @@ class _TribulationResultView extends StatelessWidget {
     required this.result,
     required this.state,
     required this.onDismiss,
-    required this.onRestart,
   });
   final TribulationResult result;
   final GameState state;
   final VoidCallback onDismiss;
-  final VoidCallback onRestart;
 
   @override
   Widget build(BuildContext context) {
     final isSuccess = result == TribulationResult.success;
-    final title = isSuccess ? '飞 升 成 功' : '渡 劫 失 败';
+    // 飞升是大乘专属——那条路径走 ending IF，不会到这里。这里
+    // 只可能是中境界成功或失败，所以标题用对称的"渡劫"。
+    final title = isSuccess ? '渡 劫 成 功' : '渡 劫 失 败';
     final ink = isSuccess ? XianxiaTheme.goldLeaf : XianxiaTheme.cinnabarRed;
     final body = isSuccess
-        ? '天劫散去，紫气东来。\n你已渡过天劫，晋升${state.player.realm.displayName}。\n道心归宿：${state.ending ?? "无"}'
+        ? '天劫散去，紫气东来。\n你已渡过天劫，晋升${state.player.realm.displayName}。\n可继续修真之旅。'
         : '雷鸣九霄，你跌回凡尘。\n寿元大减，丹田破碎。\n但道心仍在，他日可再战。';
     return Scaffold(
       backgroundColor: XianxiaTheme.inkBlack,
@@ -640,11 +637,11 @@ class _TribulationResultView extends StatelessWidget {
               ),
               const SizedBox(height: 48),
               ElevatedButton(
-                onPressed: isSuccess ? onRestart : onDismiss,
+                onPressed: onDismiss,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                   child: Text(
-                    isSuccess ? '再 次 踏 入 修 真 路' : '继 续',
+                    isSuccess ? '踏 入 新 境' : '继 续',
                     style: const TextStyle(fontSize: 16, letterSpacing: 6),
                   ),
                 ),

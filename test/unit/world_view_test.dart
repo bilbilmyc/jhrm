@@ -250,4 +250,63 @@ void main() {
     // gold_finger_overlay_test "SaveService + resetToFresh" companion
     // test. Manual UI verification happens in slice 38 (flutter run).
   });
+
+  group('Tribulation result view — mid-realm success (regression)', () {
+    testWidgets(
+        'mid-realm success action button does NOT reset realm back to 炼气',
+        (tester) async {
+      // Pre-fix bug: _TribulationResultView showed "再次踏入修真路" +
+      // onRestart for both mid-realm success and ascension success. The
+      // ascension path is intercepted by the ending IF (state.ending
+      // takes priority), but mid-realm success fell through to this
+      // view — and tapping the restart button yanked the player from
+      // 筑基 1/9 back to 炼气 1/9.
+      //
+      // Post-fix: the view's only action button is "继续" + onDismiss,
+      // which closes the result view and returns the player to the
+      // world map at their new realm.
+      final loader = ContentLoader.fromDirectory(Directory('content/凡界'));
+      expect(loader.get('lianqi-9-to-zhuji-tribulation'), isNotNull,
+          reason: 'precondition: 炼气→筑基 tribulation IF on disk');
+
+      final state = GameState.fresh();
+      state.player.realm = domain.Realm.lianQi;
+      state.player.layer = 9;
+      state.player.cultivationXp = 100;
+      // Bypass RNG so the test is deterministic regardless of seed.
+      state.forceSuccess = true;
+
+      await tester.pumpWidget(
+        MaterialApp(home: WorldView(state: state, contentLoader: loader)),
+      );
+
+      // World view auto-routes to the realm-appropriate tribulation IF.
+      // Tap the first choice to resolve.
+      await tester.tap(find.text('默念所修功法，以心御雷'));
+      await tester.pumpAndSettle();
+
+      // After successful resolution: realm advanced, layer reset, xp 0.
+      expect(state.player.realm, domain.Realm.zhuJi,
+          reason: 'tribulation success at 炼气 9/9 → 筑基 1/9');
+      expect(state.player.layer, 1);
+      expect(state.player.cultivationXp, 0);
+      expect(state.ending, isNull,
+          reason: 'mid-realm success must NOT set state.ending');
+
+      // The result view is on screen with one action button. Tapping it
+      // must leave the player at 筑基 — never reset back to 炼气.
+      final actionButton = find.byType(ElevatedButton);
+      expect(actionButton, findsOneWidget,
+          reason: 'result view shows exactly one action button');
+      await tester.tap(actionButton);
+      await tester.pumpAndSettle();
+
+      expect(state.player.realm, domain.Realm.zhuJi,
+          reason: 'action button must not reset realm back to 炼气');
+      expect(state.player.layer, 1,
+          reason: 'action button must not reset layer');
+      expect(state.player.cultivationXp, 0,
+          reason: 'action button must not zero cultivationXp');
+    });
+  });
 }

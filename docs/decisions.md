@@ -11,10 +11,10 @@
 |---|---|---|
 | 1 | 道心 path 数量 | **5 path enum**（剑/魔/王/隐/无），MVP IF 段先发 4 种 delta。隐道字段从一开始就有。 |
 | 2 | 寿元时间压力 | 寿元随闭关消耗（修真 ladder）。寿元耗尽 → 跌回上一层。渡劫失败额外扣寿。飞升成功 → 寿元上限扩到新位面标准。 |
-| 3 | 因果 MVP scope | **走法 A**：字段保留（forward-compat），事件 / 渡劫 modifier / NPC 态度全部 noop 标 `// TODO 筑基+`。 |
+| 3 | 因果 MVP scope | **走法 A**：字段保留（forward-compat），事件 / 渡劫 modifier / NPC 态度全部 noop 标 `// TODO 筑基+`。详见 `docs/design-deferred/karma.md`。 |
 | 4 | 道心数据结构 | **5 维独立累加** `Map<HeartPath, int>`，每 path 0-100。UI 5 段进度条，最高者高亮。 |
 | 5 | 飞升成功后续 | **A. 真正通关** — 显示 ending 记录（"剑仙"等）+ "再次踏入修真路"重玩按钮。state 不再继续。 |
-| 6 | MVP 战斗 | **B. 单次选功法 + 文字结算** — combat.md §1-9 整套设计延后筑基+，标 `// TODO 筑基+`。渡劫 IF 段走 IF 段系统不走 combat 系统。 |
+| 6 | MVP 战斗 | **B. 单次选功法 + 文字结算** — `docs/design-deferred/combat.md` §1-9 整套设计延后筑基+，标 `// TODO 筑基+`。渡劫 IF 段走 IF 段系统不走 combat 系统。 |
 | 7 | 节点数据位置 | **C. 混合** — Dart 提供 `nodes` 注册表（id/坐标/元素/关联 IF 段列表），描述走 `content/凡界/<node>/description.md`。 |
 | 8 | App 后台运行 | **C. 不暂停** — wall-clock 跑 timer。金手指加 `[闭关立刻完成]` 入口救场。修真 ladder 上寿元随闭关扣除。 |
 | 9 | IF 段正文模板 | **完整模板引擎**（含变量替换 + 条件分支）— MVP 工作量从 1-2 月推到 2-3 月。 |
@@ -24,7 +24,7 @@
 | 13 | 渡劫 success 公式 | `50% + (寿元/上限 × 20%, cap 20%) + 道心最强 path × 10% + forceSuccess 100%`。 |
 | 14 | 小层突破公式 | `80% + 道心 alignment 10% + forceSuccess 100%`。失败扣 30% 修为，寿元 -1 月（无论成败）。 |
 | 15 | GameState 14 字段 | 全保留 14 系统字段 + 3 子结构（World/IfState/ProceduralSeed）。所有字段用默认值（null/0/[]），fromJson optional 读取。 |
-| 16 | v0.2+ 文档 | **未决定（被the-bug bug 中断）** — 候选：A 保留现状 / B 加 `Status: DEFERRED` 头 |
+| 16 | v0.2+ 文档 | **走法 C** — 10 个 v0.2+ 设计文档（combat / treasure / spirit-beast / dao-companion / disciple / karma / techniques / reputation / reincarnation / world-event）已迁至 `docs/design-deferred/`。`docs/design/` 仅保留 MVP 文档（flutter-architecture / gold-finger / npc-profiles / storyline）。 |
 
 ---
 
@@ -69,9 +69,6 @@
 
 ## 仍需决定（deferred）
 
-- **决定 #16**：v0.2+ 文档（combat/treasure/spirit-beast/dao-companion/disciple/reputation/reincarnation/world-event + karma full）怎么处理。候选：保留现状 / 加 `Status: DEFERRED` 头 / 移到 `docs/design-deferred/`
-- **placeholder 泄漏修复**：`docs/design/combat.md` §10、`docs/design/karma.md` §3.1 有"the-bug"占位符
-- **combat.md the-bug 数据规模** 一节是模板未替换（the-bug the-bug）
 - **测试 seam**：修真 ladder 上 1 局 ~5 min，单元测试哪些必须？
 - **修真 ladder 上 1 局时间预算**：MVP 一局 ~5 分钟（30s × 9 层），金手指 `[修为满]` 一键通关会破坏这个节奏
 
@@ -84,4 +81,5 @@
 - `docs/prd/mvp.md` — MVP PRD
 - `docs/design/flutter-architecture.md` — Flutter 架构
 - `docs/issues/mvp-slice-1..7.md` — 7 个 vertical slice
-- `docs/design/*.md` — 13 个 system 设计（多数 v0.2+ deferred）
+- `docs/design/*.md` — 4 个 MVP 设计（flutter-architecture / gold-finger / npc-profiles / storyline）
+- `docs/design-deferred/*.md` — 10 个 v0.2+ 蓝图（combat / treasure / spirit-beast / dao-companion / disciple / karma / techniques / reputation / reincarnation / world-event）
