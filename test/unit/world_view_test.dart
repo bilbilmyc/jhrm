@@ -211,6 +211,35 @@ void main() {
       expect(state.ending, 'ascended-swordDao',
           reason: 'forceAscend sets ending from dominant 道心');
     });
+
+    testWidgets('with 玉箫, world view shows 道侣 飞升 IF first (slice 43)',
+        (tester) async {
+      final loader = ContentLoader.fromDirectory(Directory('content/凡界'));
+      expect(loader.get('dacheng-companion-ascension'), isNotNull,
+          reason: 'precondition: 道侣飞升 IF on disk');
+
+      final state = GameState.fresh();
+      state.player.realm = domain.Realm.daCheng;
+      state.player.layer = 9;
+      state.player.cultivationXp = 100;
+      state.player.daoCompanion = '玉箫';
+
+      await tester.pumpWidget(
+        MaterialApp(home: WorldView(state: state, contentLoader: loader)),
+      );
+
+      // With companion, the 道侣-ascension IF takes priority.
+      expect(find.text('飞升·道侣'), findsAtLeastNWidgets(1),
+          reason: 'with 道侣, world view routes to 道侣-ascension IF first');
+      // 3 options for 玉箫's choice.
+      for (final opt in [
+        '「我随你。」',
+        '「你留此界。」',
+        '「道消于此，我独行。」',
+      ]) {
+        expect(find.text(opt), findsOneWidget);
+      }
+    });
   });
 
   group('World view save UI (slice 35)', () {

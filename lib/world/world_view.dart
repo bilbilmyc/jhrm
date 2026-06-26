@@ -153,16 +153,25 @@ class _WorldViewState extends State<WorldView>
     final loader = widget.contentLoader;
     if (loader == null) return null;
     final realmName = '${realm.displayName}期';
+    final hasCompanion = widget.state.player.daoCompanion != null;
+    // Two-pass: companion-ascension IFs take priority (slice 43 — they
+    // chain to the regular 5 道抉择 IF after the companion's choice).
     for (final s in loader.all()) {
       if (s.trigger.location != '渡劫台') continue;
-      // IfTrigger currently has no on_realm field; the new IF segments
-      // store it in `requires.realm` (already a Map<String, dynamic>).
-      // Legacy IFs (炼气→筑基) only have `location`, no realm hint.
+      final reqRealm = s.requires['realm'] as String?;
+      if (reqRealm != realmName) continue;
+      final needsCompanion = s.requires['has_companion'] == true;
+      if (needsCompanion && hasCompanion) return s;
+    }
+    // Fallback: regular (non-companion) IF.
+    for (final s in loader.all()) {
+      if (s.trigger.location != '渡劫台') continue;
       final reqRealm = s.requires['realm'] as String?;
       if (reqRealm == null) {
-        // Legacy: assume 炼气期.
         if (realm == domain.Realm.lianQi) return s;
       } else if (reqRealm == realmName) {
+        final needsCompanion = s.requires['has_companion'] == true;
+        if (needsCompanion) continue; // already checked in first pass
         return s;
       }
     }
