@@ -174,6 +174,17 @@ class _WorldViewState extends State<WorldView>
     _resolveTribulationDirect();
   }
 
+  void _onAscendChoice(IfChoice c) {
+    // Apply heart_delta was already done by IfScreen; force ascension.
+    setState(() {
+      _activeSegment = null;
+    });
+    TribulationEngine(widget.state).forceAscend();
+    if (widget.saveService != null) {
+      widget.saveService!.save(widget.state);
+    }
+  }
+
   void _resolveTribulationDirect() {
     setState(() {
       _activeSegment = null;
@@ -245,6 +256,7 @@ class _WorldViewState extends State<WorldView>
         onExit: _exitIf,
         onNavigate: _onIfNavigate,
         onTribulationChoice: _onTribulationChoice,
+        onAscendChoice: _onAscendChoice,
       );
     }
     if (_breakthroughSuccess != null) {

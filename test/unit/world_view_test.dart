@@ -131,9 +131,6 @@ void main() {
   group('World view plane switching (slice 26)', () {
     test('NodeRegistry returns 8 nodes per post-凡 plane (灵/仙/神)',
         () {
-      // 凡界 is 10 (legacy from slice 2); the new planes are 8 each.
-      // Per CONTEXT.md: 4 planes × 2 realms each, 6 realms total. Plane
-      // boundaries: 凡=炼气/筑基, 灵=金丹/元婴, 仙=化神/大乘, 神=飞升.
       expect(NodeRegistry.spiritNodes.length, 8);
       expect(NodeRegistry.immortalNodes.length, 8);
       expect(NodeRegistry.divineNodes.length, 8);
@@ -159,11 +156,61 @@ void main() {
         MaterialApp(home: WorldView(state: state)),
       );
 
-      // 灵界 has 8 nodes including 浮空岛 (the first spirit node).
       expect(find.text('浮空岛'), findsOneWidget,
           reason: '金丹期 must show 灵界 nodes, not 凡界');
-      // App bar shows the plane name.
       expect(find.text('灵 界'), findsOneWidget);
+    });
+  });
+
+  group('飞升 5-选项 IF (slice 30)', () {
+    testWidgets('at 大乘 9/9 + xp 100, world view shows 飞升·五道抉择',
+        (tester) async {
+      final loader = ContentLoader.fromDirectory(Directory('content/凡界'));
+      expect(loader.get('dacheng-ascension'), isNotNull,
+          reason: 'precondition: dacheng-ascension must be on disk');
+
+      final state = GameState.fresh();
+      state.player.realm = domain.Realm.daCheng;
+      state.player.layer = 9;
+      state.player.cultivationXp = 100;
+
+      await tester.pumpWidget(
+        MaterialApp(home: WorldView(state: state, contentLoader: loader)),
+      );
+
+      expect(find.text('飞升·五道抉择'), findsAtLeastNWidgets(1),
+          reason: 'auto-routes to 飞升 5-选项 IF at 大乘 9/9 + xp 100');
+      // 5 options visible.
+      for (final opt in [
+        '以剑入道，斩断一切',
+        '以魔代天，夺而自立',
+        '以王承道，修补秩序',
+        '以隐避世，飘然远引',
+        '破道而立，不立文字',
+      ]) {
+        expect(find.text(opt), findsOneWidget, reason: '5-选项 must include "$opt"');
+      }
+    });
+
+    testWidgets('tapping 以剑入道 ascends with 剑道 +5 + ending set',
+        (tester) async {
+      final loader = ContentLoader.fromDirectory(Directory('content/凡界'));
+      final state = GameState.fresh();
+      state.player.realm = domain.Realm.daCheng;
+      state.player.layer = 9;
+      state.player.cultivationXp = 100;
+
+      await tester.pumpWidget(
+        MaterialApp(home: WorldView(state: state, contentLoader: loader)),
+      );
+
+      await tester.tap(find.text('以剑入道，斩断一切'));
+      await tester.pumpAndSettle();
+
+      expect(state.player.heartVector[domain.HeartPath.swordDao], 5,
+          reason: 'choice bumps 剑道 by 5');
+      expect(state.ending, 'ascended-swordDao',
+          reason: 'forceAscend sets ending from dominant 道心');
     });
   });
 }

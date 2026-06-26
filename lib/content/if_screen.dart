@@ -19,6 +19,7 @@ class IfScreen extends StatelessWidget {
     required this.onExit,
     this.onNavigate,
     this.onTribulationChoice,
+    this.onAscendChoice,
   });
 
   final GameState state;
@@ -26,6 +27,7 @@ class IfScreen extends StatelessWidget {
   final VoidCallback onExit;
   final ValueChanged<IfSegment>? onNavigate;
   final ValueChanged<IfChoice>? onTribulationChoice;
+  final ValueChanged<IfChoice>? onAscendChoice;
 
   void _applyChoice(IfChoice c) {
     for (final e in c.heartDelta.entries) {
@@ -130,6 +132,8 @@ class IfScreen extends StatelessWidget {
                           _applyChoice(c);
                           if (c.action == 'tribulation') {
                             onTribulationChoice?.call(c);
+                          } else if (c.action == 'ascend') {
+                            onAscendChoice?.call(c);
                           } else if (c.goto == null) {
                             // Choice with no target: end the story here.
                             onExit();

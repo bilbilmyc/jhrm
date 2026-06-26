@@ -134,6 +134,20 @@ class TribulationEngine {
     state.notify();
   }
 
+  /// Forces ascension at 大乘 — the 5-选项 IF has already applied the
+  /// player's heart_delta, this just sets the ending marker and notifies.
+  /// Precondition: state.player.realm == daCheng.
+  void forceAscend() {
+    if (state.player.realm != Realm.daCheng) {
+      throw StateError(
+        'forceAscend called at realm ${state.player.realm.displayName}, '
+        'expected 大乘期',
+      );
+    }
+    state.ending = 'ascended-${_topHeartPath().name}';
+    state.notify();
+  }
+
   HeartPath _topHeartPath() {
     final entries = state.player.heartVector.entries.toList();
     entries.sort((a, b) => b.value.compareTo(a.value));
