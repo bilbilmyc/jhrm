@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>江湖如梦 · 金丹 · 丹炉紫焰</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6EDD8"/>
+      <stop offset="0.65" stop-color="#D4C28E"/>
+      <stop offset="1" stop-color="#BEAA77"/>
+    </linearGradient>
+    <linearGradient id="goldEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4B05A"/>
+      <stop offset="1" stop-color="#8C6B22"/>
+    </linearGradient>
+    <radialGradient id="flame" cx="0.5" cy="0.7" r="0.6">
+      <stop offset="0" stop-color="#B85447"/>
+      <stop offset="0.5" stop-color="#7B5BB6"/>
+      <stop offset="1" stop-color="#1A1410"/>
+    </radialGradient>
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="mist" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="flameBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- 远山 -->
+  <g filter="url(#ink)" opacity="0.55">
+    <path d="M 0 700 L 240 600 L 460 680 L 700 580 L 960 660 L 1220 580 L 1460 670 L 1700 600 L 1920 660 L 1920 800 L 0 800 Z" fill="#3A2C1E"/>
+  </g>
+  <g filter="url(#ink)" opacity="0.85">
+    <path d="M 0 820 L 200 760 L 420 800 L 680 740 L 960 800 L 1240 740 L 1500 800 L 1760 760 L 1920 790 L 1920 880 L 0 880 Z" fill="#1A1410"/>
+  </g>
+
+  <!-- 丹炉紫焰 + 9 颗丹丸弧 -->
+  <g filter="url(#ink)" opacity="0.95">
+    <!-- 中央丹炉 -->
+    <g transform="translate(960,820)">
+      <!-- 炉座 -->
+      <rect x="-90" y="120" width="180" height="40" fill="#3A2C1E"/>
+      <rect x="-110" y="100" width="220" height="30" fill="#1A1410"/>
+      <!-- 炉身（梯形） -->
+      <path d="M -100 100 L -120 -40 L -90 -60 L 90 -60 L 120 -40 L 100 100 Z" fill="#3A2C1E"/>
+      <!-- 炉身金纹 -->
+      <path d="M -100 0 L 100 0" stroke="#B6892C" stroke-width="3"/>
+      <path d="M -105 30 L 105 30" stroke="#B6892C" stroke-width="2"/>
+      <path d="M -108 60 L 108 60" stroke="#B6892C" stroke-width="2"/>
+      <!-- 炉口 -->
+      <ellipse cx="0" cy="-60" rx="90" ry="20" fill="#1A1410"/>
+      <ellipse cx="0" cy="-60" rx="80" ry="14" fill="#B03327"/>
+      <!-- 炉耳 -->
+      <path d="M -120 -40 Q -150 -20 -140 0 L -130 -10" fill="#3A2C1E"/>
+      <path d="M 120 -40 Q 150 -20 140 0 L 130 -10" fill="#3A2C1E"/>
+      <!-- 炉盖 -->
+      <path d="M -100 -60 L -50 -100 L 50 -100 L 100 -60 Z" fill="#3A2C1E"/>
+      <circle cx="0" cy="-110" r="14" fill="#B6892C"/>
+      <circle cx="0" cy="-110" r="6" fill="#D4B05A"/>
+    </g>
+
+    <!-- 紫焰从炉口喷出 -->
+    <g filter="url(#flameBlur)">
+      <path d="M 880 760 Q 870 720 890 680 Q 870 640 900 600 Q 880 560 910 520 Q 890 480 920 440 Q 900 400 930 360 L 960 320 L 990 360 Q 1020 400 1000 440 Q 1030 480 1010 520 Q 1040 560 1020 600 Q 1050 640 1030 680 Q 1050 720 1040 760 Z" fill="url(#flame)"/>
+    </g>
+    <!-- 火焰高亮 -->
+    <path d="M 945 740 Q 935 700 955 660 Q 945 620 960 580 Q 950 540 965 500 Q 960 460 970 420 Q 968 380 975 340 L 960 320 Q 950 380 945 420 Q 942 460 945 500 Q 940 540 950 580 Q 942 620 950 660 Q 945 700 950 740 Z" fill="#D4B05A" opacity="0.55"/>
+
+    <!-- 9 颗丹丸弧（一颗一层） -->
+    <g transform="translate(960,540)">
+      <path d="M -240 0 A 240 80 0 0 1 240 0" fill="none" stroke="#B6892C" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+      <circle cx="-240" cy="0" r="13" fill="#B03327"/>
+      <circle cx="-216" cy="-44" r="13" fill="#B03327"/>
+      <circle cx="-160" cy="-72" r="13" fill="#B6892C"/>
+      <circle cx="-80" cy="-88" r="13" fill="#B6892C"/>
+      <circle cx="0" cy="-92" r="15" fill="#D4B05A"/>
+      <circle cx="80" cy="-88" r="13" fill="#B6892C"/>
+      <circle cx="160" cy="-72" r="13" fill="#B6892C"/>
+      <circle cx="216" cy="-44" r="13" fill="#B03327"/>
+      <circle cx="240" cy="0" r="13" fill="#B03327"/>
+    </g>
+  </g>
+
+  <!-- 云气带 -->
+  <rect x="0" y="640" width="1920" height="120" fill="#F6EDD8" opacity="0.20" filter="url(#mist)"/>
+
+  <!-- 金边框 -->
+  <rect x="40" y="40" width="1840" height="1000" fill="none" stroke="url(#goldEdge)" stroke-width="2.5"/>
+  <g fill="none" stroke="url(#goldEdge)" stroke-width="2">
+    <path d="M 40 100 Q 90 80 120 110 Q 140 130 110 145 Q 90 155 70 145 Q 55 130 60 110"/>
+    <path d="M 1880 100 Q 1830 80 1800 110 Q 1780 130 1810 145 Q 1830 155 1850 145 Q 1865 130 1860 110"/>
+    <path d="M 40 980 Q 90 1000 120 970 Q 140 950 110 935 Q 90 925 70 935 Q 55 950 60 970"/>
+    <path d="M 1880 980 Q 1830 1000 1800 970 Q 1780 950 1810 935 Q 1830 925 1850 935 Q 1865 950 1860 970"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="960" y="380" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="320" font-weight="700" fill="#B6892C" letter-spacing="40">金 丹</text>
+
+  <text x="960" y="455" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="56" font-weight="400" fill="#3A2C1E" letter-spacing="16">江 湖 如 梦</text>
+
+  <line x1="760" y1="478" x2="1160" y2="478" stroke="#B6892C" stroke-width="1"/>
+  <text x="960" y="510" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="28" font-weight="400" fill="#5C5040" letter-spacing="6">九 转 金 丹  ·  炉 火 纯 青</text>
+
+  <!-- 道印 -->
+  <g transform="translate(1750,930)">
+    <rect x="-40" y="-40" width="80" height="80" fill="#B03327"/>
+    <text x="0" y="22" text-anchor="middle"
+          font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+          font-size="64" font-weight="700" fill="#F6EDD8">道</text>
+    <rect x="-44" y="-44" width="88" height="88" fill="none" stroke="#F6EDD8" stroke-width="2"/>
+  </g>
+
+  <text x="100" y="1010"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="20" font-weight="400" fill="#B6892C" letter-spacing="3">JIANGHU RUMENG  ·  v1.0.0  ·  0 3 / 0 5</text>
+</svg>

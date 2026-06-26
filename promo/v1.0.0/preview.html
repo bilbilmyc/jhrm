@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>江湖如梦 · 修真海报 · v1.0.0</title>
+  <style>
+    :root {
+      --ink: #1A1410;
+      --paper: #F6EDD8;
+      --scroll: #E8D9B5;
+      --tan-deep: #BEAA77;
+      --gold: #B6892C;
+      --gold-light: #D4B05A;
+      --gold-deep: #8C6B22;
+      --brown: #3A2C1E;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Songti SC', 'STSong', 'PingFang SC', 'Noto Serif CJK SC', serif;
+      padding: 48px 24px;
+      min-height: 100vh;
+    }
+    header {
+      max-width: 2000px;
+      margin: 0 auto 48px;
+      text-align: center;
+      padding: 24px 0 32px;
+      border-bottom: 1px solid var(--gold);
+    }
+    h1 {
+      font-weight: 400;
+      letter-spacing: 16px;
+      margin: 0 0 12px;
+      color: var(--gold-light);
+      font-size: 38px;
+    }
+    .tagline {
+      color: var(--tan-deep);
+      letter-spacing: 4px;
+      font-size: 16px;
+      margin: 0;
+    }
+    .meta {
+      color: var(--gold);
+      letter-spacing: 2px;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      max-width: 2000px;
+      margin: 0 auto;
+    }
+    figure {
+      margin: 0;
+      border: 2px solid var(--gold);
+      background: var(--paper);
+      box-shadow: 0 0 0 6px var(--ink), 0 0 0 8px var(--gold-deep);
+    }
+    figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    figcaption {
+      padding: 12px 24px;
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: var(--gold-light);
+      background: var(--brown);
+      border-top: 1px solid var(--gold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    figcaption .num {
+      color: var(--gold);
+      letter-spacing: 6px;
+      font-weight: 700;
+    }
+    figcaption .name {
+      color: var(--paper);
+      letter-spacing: 8px;
+    }
+    figcaption .sub {
+      color: var(--tan-deep);
+      letter-spacing: 2px;
+      font-size: 12px;
+    }
+    footer {
+      max-width: 2000px;
+      margin: 64px auto 0;
+      padding: 24px 0 0;
+      border-top: 1px solid var(--gold);
+      text-align: center;
+      color: var(--tan-deep);
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+    footer p { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>江 湖 如 梦</h1>
+    <p class="tagline">传 统 仙 侠 风 格 文 字 冒 险 沙 盒</p>
+    <p class="meta">五 境 海 报  ·  v1.0.0  ·  1920 × 1080</p>
+  </header>
+
+  <main class="grid">
+    <figure>
+      <img src="01-lianqi.svg" alt="炼气 · 凡界山门">
+      <figcaption>
+        <span class="num">0 1 / 0 5</span>
+        <span class="name">炼 气</span>
+        <span class="sub">凡 人 起 步  ·  灵 气 初 醒</span>
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="02-zhuji.svg" alt="筑基 · 灵界云台">
+      <figcaption>
+        <span class="num">0 2 / 0 5</span>
+        <span class="name">筑 基</span>
+        <span class="sub">灵 根 初 成  ·  草 木 有 灵</span>
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="03-jindan.svg" alt="金丹 · 丹炉紫焰">
+      <figcaption>
+        <span class="num">0 3 / 0 5</span>
+        <span class="name">金 丹</span>
+        <span class="sub">九 转 金 丹  ·  炉 火 纯 青</span>
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="04-yuanying.svg" alt="元婴 · 仙界莲台">
+      <figcaption>
+        <span class="num">0 4 / 0 5</span>
+        <span class="name">元 婴</span>
+        <span class="sub">元 神 出 窍  ·  雷 音 初 动</span>
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="05-huashen-dacheng.svg" alt="化神大乘 · 神界飞升台">
+      <figcaption>
+        <span class="num">0 5 / 0 5</span>
+        <span class="name">化 神 大 乘</span>
+        <span class="sub">化 神 大 乘  ·  万 神 殿 开</span>
+      </figcaption>
+    </figure>
+  </main>
+
+  <footer>
+    <p>SVG 源文件随版本入 git  ·  本页仅作设计审阅</p>
+    <p>JIANGHU RUMENG  ·  Xianxia Text Adventure Sandbox  ·  v1.0.0</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>江湖如梦 · 元婴 · 仙界莲台</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6EDD8"/>
+      <stop offset="0.65" stop-color="#D4C28E"/>
+      <stop offset="1" stop-color="#BEAA77"/>
+    </linearGradient>
+    <linearGradient id="goldEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4B05A"/>
+      <stop offset="1" stop-color="#8C6B22"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#7BB6CC"/>
+      <stop offset="0.6" stop-color="#3A5E78"/>
+      <stop offset="1" stop-color="#1A1410"/>
+    </radialGradient>
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="mist" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="orbGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- 远山仙界 -->
+  <g filter="url(#ink)" opacity="0.55">
+    <path d="M 0 700 L 220 580 L 480 660 L 760 540 L 1040 640 L 1320 540 L 1620 660 L 1880 600 L 1920 620 L 1920 800 L 0 800 Z" fill="#3A5E78"/>
+  </g>
+  <g filter="url(#ink)" opacity="0.85">
+    <path d="M 0 820 L 220 760 L 460 800 L 720 740 L 960 800 L 1200 740 L 1480 810 L 1740 770 L 1920 800 L 1920 880 L 0 880 Z" fill="#1A1410"/>
+  </g>
+
+  <!-- 紫电（从上而下） -->
+  <g opacity="0.85">
+    <path d="M 600 80 L 580 180 L 620 200 L 580 320 L 640 340 L 600 460 L 660 480 L 620 580"
+          fill="none" stroke="#7B5BB6" stroke-width="4" filter="url(#ink)"/>
+    <path d="M 1320 80 L 1340 200 L 1300 220 L 1340 340 L 1280 360 L 1320 480 L 1260 500 L 1300 600"
+          fill="none" stroke="#7B5BB6" stroke-width="4" filter="url(#ink)"/>
+  </g>
+
+  <!-- 中央元婴坐影（圆形光球内） -->
+  <g transform="translate(960,620)">
+    <!-- 外光晕 -->
+    <circle cx="0" cy="0" r="200" fill="#7BB6CC" opacity="0.25" filter="url(#orbGlow)"/>
+    <circle cx="0" cy="0" r="140" fill="#7BB6CC" opacity="0.35" filter="url(#orbGlow)"/>
+    <!-- 光球 -->
+    <circle cx="0" cy="0" r="120" fill="url(#orb)"/>
+    <circle cx="0" cy="0" r="120" fill="none" stroke="#D4B05A" stroke-width="3"/>
+    <circle cx="0" cy="0" r="115" fill="none" stroke="#F6EDD8" stroke-width="1" opacity="0.6"/>
+    <!-- 元婴坐姿（简化） -->
+    <g filter="url(#ink)">
+      <!-- 头 -->
+      <circle cx="0" cy="-50" r="22" fill="#F6EDD8"/>
+      <!-- 身 -->
+      <path d="M -28 -28 Q -28 -10 -22 0 L -22 40 Q -22 60 -10 60 L 10 60 Q 22 60 22 40 L 22 0 Q 28 -10 28 -28 Q 28 -36 22 -38 L -22 -38 Q -28 -36 -28 -28 Z" fill="#F6EDD8"/>
+      <!-- 莲花座 -->
+      <path d="M -60 60 L -40 50 L -20 56 L 0 48 L 20 56 L 40 50 L 60 60 L 40 70 L 20 64 L 0 70 L -20 64 L -40 70 Z" fill="#B6892C"/>
+      <!-- 双手合十 -->
+      <path d="M -6 -10 L -6 10 L 6 10 L 6 -10 Z" fill="#F6EDD8"/>
+    </g>
+  </g>
+
+  <!-- 仙鹤双飞 -->
+  <g opacity="0.85">
+    <!-- 左鹤 -->
+    <g transform="translate(380,300)" fill="#F6EDD8" stroke="#1A1410" stroke-width="1.5">
+      <path d="M 0 0 Q 30 -20 60 -10 Q 90 -25 110 -8 Q 90 0 60 4 Q 30 8 0 0 Z"/>
+      <ellipse cx="120" cy="-2" rx="18" ry="10"/>
+      <path d="M 138 -6 L 152 -10 L 148 -2 L 154 4 L 138 4 Z" fill="#B03327"/>
+      <path d="M 100 -10 Q 130 -50 160 -30 Q 130 -10 100 -10" fill="none" stroke="#1A1410" stroke-width="2"/>
+    </g>
+    <!-- 右鹤（更远更小） -->
+    <g transform="translate(1450,260) scale(0.7)" fill="#F6EDD8" stroke="#1A1410" stroke-width="2">
+      <path d="M 0 0 Q 30 -20 60 -10 Q 90 -25 110 -8 Q 90 0 60 4 Q 30 8 0 0 Z"/>
+      <ellipse cx="120" cy="-2" rx="18" ry="10"/>
+      <path d="M 138 -6 L 152 -10 L 148 -2 L 154 4 L 138 4 Z" fill="#B03327"/>
+    </g>
+  </g>
+
+  <!-- 云气带 -->
+  <rect x="0" y="660" width="1920" height="120" fill="#F6EDD8" opacity="0.20" filter="url(#mist)"/>
+
+  <!-- 金边框 -->
+  <rect x="40" y="40" width="1840" height="1000" fill="none" stroke="url(#goldEdge)" stroke-width="2.5"/>
+  <g fill="none" stroke="url(#goldEdge)" stroke-width="2">
+    <path d="M 40 100 Q 90 80 120 110 Q 140 130 110 145 Q 90 155 70 145 Q 55 130 60 110"/>
+    <path d="M 1880 100 Q 1830 80 1800 110 Q 1780 130 1810 145 Q 1830 155 1850 145 Q 1865 130 1860 110"/>
+    <path d="M 40 980 Q 90 1000 120 970 Q 140 950 110 935 Q 90 925 70 935 Q 55 950 60 970"/>
+    <path d="M 1880 980 Q 1830 1000 1800 970 Q 1780 950 1810 935 Q 1830 925 1850 935 Q 1865 950 1860 970"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="960" y="380" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="320" font-weight="700" fill="#3A5E78" letter-spacing="40">元 婴</text>
+
+  <text x="960" y="455" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="56" font-weight="400" fill="#3A2C1E" letter-spacing="16">江 湖 如 梦</text>
+
+  <line x1="760" y1="478" x2="1160" y2="478" stroke="#B6892C" stroke-width="1"/>
+  <text x="960" y="510" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="28" font-weight="400" fill="#5C5040" letter-spacing="6">元 神 出 窍  ·  雷 音 初 动</text>
+
+  <!-- 道印 -->
+  <g transform="translate(1750,930)">
+    <rect x="-40" y="-40" width="80" height="80" fill="#B03327"/>
+    <text x="0" y="22" text-anchor="middle"
+          font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+          font-size="64" font-weight="700" fill="#F6EDD8">道</text>
+    <rect x="-44" y="-44" width="88" height="88" fill="none" stroke="#F6EDD8" stroke-width="2"/>
+  </g>
+
+  <text x="100" y="1010"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="20" font-weight="400" fill="#B6892C" letter-spacing="3">JIANGHU RUMENG  ·  v1.0.0  ·  0 4 / 0 5</text>
+</svg>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>江湖如梦 · 炼气 · 凡界山门</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6EDD8"/>
+      <stop offset="0.65" stop-color="#D4C28E"/>
+      <stop offset="1" stop-color="#BEAA77"/>
+    </linearGradient>
+    <linearGradient id="goldEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4B05A"/>
+      <stop offset="1" stop-color="#8C6B22"/>
+    </linearGradient>
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="mist" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 0. 背景渐变 -->
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- 1. 远山三层（写意水墨） -->
+  <g filter="url(#ink)" opacity="0.55">
+    <path d="M 0 720 L 200 640 L 380 700 L 560 600 L 780 690 L 1000 620 L 1240 700 L 1460 640 L 1700 700 L 1920 660 L 1920 800 L 0 800 Z" fill="#1A1410"/>
+  </g>
+  <g filter="url(#ink)" opacity="0.75">
+    <path d="M 0 820 L 180 760 L 360 800 L 540 740 L 760 810 L 960 770 L 1180 810 L 1380 760 L 1600 810 L 1820 770 L 1920 800 L 1920 880 L 0 880 Z" fill="#3A2C1E"/>
+  </g>
+  <g filter="url(#ink)" opacity="0.90">
+    <path d="M 0 920 L 240 880 L 460 920 L 720 870 L 960 920 L 1200 870 L 1460 920 L 1720 880 L 1920 910 L 1920 1080 L 0 1080 Z" fill="#1A1410"/>
+  </g>
+
+  <!-- 2. 境界 motif：山门 + 茅屋 + 炊烟 -->
+  <g filter="url(#ink)" opacity="0.95">
+    <!-- 山门（拱形牌坊） -->
+    <g transform="translate(960,560)">
+      <path d="M -160 200 L -160 -60 Q -160 -140 -80 -140 L 80 -140 Q 160 -140 160 -60 L 160 200" fill="none" stroke="#1A1410" stroke-width="8"/>
+      <rect x="-180" y="-180" width="360" height="40" fill="#1A1410"/>
+      <rect x="-160" y="-150" width="320" height="14" fill="#3A2C1E"/>
+      <!-- 牌匾 -->
+      <rect x="-70" y="-105" width="140" height="40" fill="#B6892C"/>
+      <text x="0" y="-75" text-anchor="middle" font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif" font-size="36" font-weight="700" fill="#F6EDD8" letter-spacing="6">山 门</text>
+      <!-- 立柱基座 -->
+      <rect x="-180" y="180" width="40" height="40" fill="#3A2C1E"/>
+      <rect x="140" y="180" width="40" height="40" fill="#3A2C1E"/>
+    </g>
+
+    <!-- 左侧茅屋 -->
+    <g transform="translate(420,820)">
+      <path d="M -100 0 L 0 -90 L 100 0 L 100 80 L -100 80 Z" fill="#3A2C1E"/>
+      <path d="M -110 0 L 0 -100 L 110 0" fill="none" stroke="#1A1410" stroke-width="3"/>
+      <rect x="-25" y="20" width="50" height="60" fill="#1A1410"/>
+      <!-- 炊烟 -->
+      <path d="M 30 0 Q 50 -50 30 -90 Q 10 -130 40 -160 Q 70 -180 50 -210" fill="none" stroke="#6B6058" stroke-width="4" opacity="0.7"/>
+    </g>
+
+    <!-- 右侧茅屋（更小） -->
+    <g transform="translate(1500,840)">
+      <path d="M -75 0 L 0 -68 L 75 0 L 75 60 L -75 60 Z" fill="#3A2C1E"/>
+      <rect x="-18" y="14" width="36" height="46" fill="#1A1410"/>
+      <path d="M 22 0 Q 38 -36 22 -68 Q 8 -94 32 -116" fill="none" stroke="#6B6058" stroke-width="3" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- 3. 云气带 -->
+  <rect x="0" y="660" width="1920" height="120" fill="#F6EDD8" opacity="0.18" filter="url(#mist)"/>
+
+  <!-- 4. 金边框 + 四角卷云 -->
+  <rect x="40" y="40" width="1840" height="1000" fill="none" stroke="url(#goldEdge)" stroke-width="2.5"/>
+  <g fill="none" stroke="url(#goldEdge)" stroke-width="2">
+    <!-- 左上角 -->
+    <path d="M 40 100 Q 90 80 120 110 Q 140 130 110 145 Q 90 155 70 145 Q 55 130 60 110"/>
+    <!-- 右上角 -->
+    <path d="M 1880 100 Q 1830 80 1800 110 Q 1780 130 1810 145 Q 1830 155 1850 145 Q 1865 130 1860 110"/>
+    <!-- 左下角 -->
+    <path d="M 40 980 Q 90 1000 120 970 Q 140 950 110 935 Q 90 925 70 935 Q 55 950 60 970"/>
+    <!-- 右下角 -->
+    <path d="M 1880 980 Q 1830 1000 1800 970 Q 1780 950 1810 935 Q 1830 925 1850 935 Q 1865 950 1860 970"/>
+  </g>
+
+  <!-- 5. 标题：境界名（320px 黑墨大字） -->
+  <text x="960" y="380" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="320" font-weight="700" fill="#1A1410" letter-spacing="40">炼 气</text>
+
+  <!-- 6. 项目名 + 副标 -->
+  <text x="960" y="455" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="56" font-weight="400" fill="#3A2C1E" letter-spacing="16">江 湖 如 梦</text>
+
+  <line x1="760" y1="478" x2="1160" y2="478" stroke="#B6892C" stroke-width="1"/>
+  <text x="960" y="510" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="28" font-weight="400" fill="#5C5040" letter-spacing="6">凡 人 起 步  ·  灵 气 初 醒</text>
+
+  <!-- 7. 道印（右下） -->
+  <g transform="translate(1750,930)">
+    <rect x="-40" y="-40" width="80" height="80" fill="#B03327"/>
+    <text x="0" y="22" text-anchor="middle"
+          font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+          font-size="64" font-weight="700" fill="#F6EDD8">道</text>
+    <rect x="-44" y="-44" width="88" height="88" fill="none" stroke="#F6EDD8" stroke-width="2"/>
+  </g>
+
+  <!-- 8. 页脚版本号 -->
+  <text x="100" y="1010"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="20" font-weight="400" fill="#B6892C" letter-spacing="3">JIANGHU RUMENG  ·  v1.0.0  ·  0 1 / 0 5</text>
+</svg>

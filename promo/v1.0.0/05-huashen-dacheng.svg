@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <title>江湖如梦 · 化神大乘 · 神界飞升台</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6EDD8"/>
+      <stop offset="0.65" stop-color="#D4C28E"/>
+      <stop offset="1" stop-color="#BEAA77"/>
+    </linearGradient>
+    <linearGradient id="goldEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4B05A"/>
+      <stop offset="1" stop-color="#8C6B22"/>
+    </linearGradient>
+    <radialGradient id="pillar" cx="0.5" cy="0" r="1">
+      <stop offset="0" stop-color="#D4B05A"/>
+      <stop offset="0.6" stop-color="#B6892C"/>
+      <stop offset="1" stop-color="#3A2C1E"/>
+    </radialGradient>
+    <linearGradient id="thunder" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#F6EDD8" stop-opacity="0.9"/>
+      <stop offset="0.5" stop-color="#D4B05A" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#B03327" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="17"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="mist" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="thunderGlow" x="-30%" y="-10%" width="160%" height="120%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- 紫金雷柱（贯穿天地） -->
+  <g opacity="0.8">
+    <rect x="940" y="60" width="40" height="600" fill="url(#thunder)" filter="url(#thunderGlow)"/>
+    <rect x="945" y="60" width="30" height="600" fill="url(#thunder)"/>
+  </g>
+
+  <!-- 远山神殿废墟 -->
+  <g filter="url(#ink)" opacity="0.6">
+    <path d="M 0 720 L 240 620 L 460 700 L 700 600 L 960 680 L 1220 600 L 1460 690 L 1700 620 L 1920 680 L 1920 800 L 0 800 Z" fill="#3A2C1E"/>
+  </g>
+  <g filter="url(#ink)" opacity="0.85">
+    <path d="M 0 820 L 220 760 L 460 800 L 720 740 L 960 800 L 1200 740 L 1480 810 L 1740 770 L 1920 800 L 1920 880 L 0 880 Z" fill="#1A1410"/>
+  </g>
+
+  <!-- 万神殿柱 + 飞升台 -->
+  <g filter="url(#ink)" opacity="0.95">
+    <!-- 飞升台（基座三层） -->
+    <g transform="translate(960,830)">
+      <!-- 底层基座 -->
+      <path d="M -380 130 L -360 100 L 360 100 L 380 130 L 360 150 L -360 150 Z" fill="#3A2C1E"/>
+      <!-- 二层 -->
+      <path d="M -340 100 L -320 70 L 320 70 L 340 100 L 320 120 L -320 120 Z" fill="#1A1410"/>
+      <!-- 三层 -->
+      <path d="M -290 70 L -270 40 L 270 40 L 290 70 L 270 90 L -270 90 Z" fill="#3A2C1E"/>
+      <!-- 顶层 -->
+      <path d="M -240 40 L -220 10 L 220 10 L 240 40 L 220 60 L -220 60 Z" fill="#1A1410"/>
+      <!-- 台面 -->
+      <ellipse cx="0" cy="10" rx="220" ry="20" fill="#B6892C"/>
+      <ellipse cx="0" cy="6" rx="200" ry="14" fill="#3A2C1E"/>
+      <!-- 中央祭坛 -->
+      <circle cx="0" cy="-30" r="24" fill="#B03327"/>
+      <circle cx="0" cy="-30" r="16" fill="#D4B05A"/>
+      <!-- 中央八角星 -->
+      <g stroke="#F6EDD8" stroke-width="1" fill="none">
+        <path d="M 0 -50 L 8 -32 L 26 -32 L 12 -20 L 18 -2 L 0 -12 L -18 -2 L -12 -20 L -26 -32 L -8 -32 Z"/>
+      </g>
+    </g>
+
+    <!-- 万神殿柱（4 根） -->
+    <g>
+      <!-- 左外柱 -->
+      <g transform="translate(540,820)">
+        <rect x="-30" y="-340" width="60" height="340" fill="url(#pillar)"/>
+        <rect x="-50" y="-380" width="100" height="40" fill="#3A2C1E"/>
+        <rect x="-40" y="-360" width="80" height="20" fill="#B6892C"/>
+        <rect x="-50" y="0" width="100" height="20" fill="#3A2C1E"/>
+        <rect x="-40" y="-30" width="80" height="20" fill="#1A1410"/>
+      </g>
+      <!-- 左内柱 -->
+      <g transform="translate(700,820)">
+        <rect x="-25" y="-300" width="50" height="300" fill="url(#pillar)"/>
+        <rect x="-42" y="-336" width="84" height="36" fill="#3A2C1E"/>
+        <rect x="-35" y="-320" width="70" height="18" fill="#B6892C"/>
+        <rect x="-42" y="0" width="84" height="20" fill="#3A2C1E"/>
+      </g>
+      <!-- 右内柱 -->
+      <g transform="translate(1220,820)">
+        <rect x="-25" y="-300" width="50" height="300" fill="url(#pillar)"/>
+        <rect x="-42" y="-336" width="84" height="36" fill="#3A2C1E"/>
+        <rect x="-35" y="-320" width="70" height="18" fill="#B6892C"/>
+        <rect x="-42" y="0" width="84" height="20" fill="#3A2C1E"/>
+      </g>
+      <!-- 右外柱 -->
+      <g transform="translate(1380,820)">
+        <rect x="-30" y="-340" width="60" height="340" fill="url(#pillar)"/>
+        <rect x="-50" y="-380" width="100" height="40" fill="#3A2C1E"/>
+        <rect x="-40" y="-360" width="80" height="20" fill="#B6892C"/>
+        <rect x="-50" y="0" width="100" height="20" fill="#3A2C1E"/>
+        <rect x="-40" y="-30" width="80" height="20" fill="#1A1410"/>
+      </g>
+    </g>
+
+    <!-- 飞升紫雷（从云端劈向祭坛） -->
+    <path d="M 960 80 L 940 200 L 980 240 L 940 360 L 990 400 L 950 520 L 985 560 L 960 660 L 940 740"
+          fill="none" stroke="#7B5BB6" stroke-width="5" filter="url(#ink)"/>
+    <path d="M 960 80 L 980 200 L 940 240 L 980 360 L 935 400 L 970 520 L 935 560 L 960 660 L 980 740"
+          fill="none" stroke="#D4B05A" stroke-width="2" opacity="0.7"/>
+  </g>
+
+  <!-- 云气带 -->
+  <rect x="0" y="600" width="1920" height="120" fill="#F6EDD8" opacity="0.18" filter="url(#mist)"/>
+
+  <!-- 金边框 -->
+  <rect x="40" y="40" width="1840" height="1000" fill="none" stroke="url(#goldEdge)" stroke-width="2.5"/>
+  <g fill="none" stroke="url(#goldEdge)" stroke-width="2">
+    <path d="M 40 100 Q 90 80 120 110 Q 140 130 110 145 Q 90 155 70 145 Q 55 130 60 110"/>
+    <path d="M 1880 100 Q 1830 80 1800 110 Q 1780 130 1810 145 Q 1830 155 1850 145 Q 1865 130 1860 110"/>
+    <path d="M 40 980 Q 90 1000 120 970 Q 140 950 110 935 Q 90 925 70 935 Q 55 950 60 970"/>
+    <path d="M 1880 980 Q 1830 1000 1800 970 Q 1780 950 1810 935 Q 1830 925 1850 935 Q 1865 950 1860 970"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="960" y="380" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="280" font-weight="700" fill="#B03327" letter-spacing="36">化 神 大 乘</text>
+
+  <text x="960" y="455" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="56" font-weight="400" fill="#3A2C1E" letter-spacing="16">江 湖 如 梦</text>
+
+  <line x1="760" y1="478" x2="1160" y2="478" stroke="#B6892C" stroke-width="1"/>
+  <text x="960" y="510" text-anchor="middle"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="28" font-weight="400" fill="#5C5040" letter-spacing="6">化 神 大 乘  ·  万 神 殿 开</text>
+
+  <!-- 5 道心 ending 标 -->
+  <g transform="translate(960,565)" font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif" font-size="20" fill="#3A2C1E" text-anchor="middle">
+    <text x="-380" y="0" letter-spacing="3">剑 · 剑 仙</text>
+    <text x="-180" y="0" letter-spacing="3">魔 · 魔 尊</text>
+    <text x="20" y="0" letter-spacing="3">王 · 圣 王</text>
+    <text x="180" y="0" letter-spacing="3">隐 · 散 仙</text>
+    <text x="380" y="0" letter-spacing="3">无 · 天 地 客</text>
+  </g>
+
+  <!-- 8 灵根 glyph strip -->
+  <g transform="translate(960,990)" font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif" font-size="22" fill="#B6892C" text-anchor="middle" letter-spacing="6">
+    <text x="-420">金</text>
+    <text x="-300">木</text>
+    <text x="-180">水</text>
+    <text x="-60">火</text>
+    <text x="60">土</text>
+    <text x="180">风</text>
+    <text x="300">雷</text>
+    <text x="420">冰</text>
+  </g>
+
+  <!-- 道印 -->
+  <g transform="translate(1750,930)">
+    <rect x="-40" y="-40" width="80" height="80" fill="#B03327"/>
+    <text x="0" y="22" text-anchor="middle"
+          font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+          font-size="64" font-weight="700" fill="#F6EDD8">道</text>
+    <rect x="-44" y="-44" width="88" height="88" fill="none" stroke="#F6EDD8" stroke-width="2"/>
+  </g>
+
+  <text x="100" y="1010"
+        font-family="'Songti SC','STSong','PingFang SC','Noto Serif CJK SC',serif"
+        font-size="20" font-weight="400" fill="#B6892C" letter-spacing="3">JIANGHU RUMENG  ·  v1.0.0  ·  0 5 / 0 5</text>
+</svg>
