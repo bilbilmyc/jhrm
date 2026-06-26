@@ -10,6 +10,14 @@
 # stay in sync with the version shown in-app. The release tag is the
 # git tag (v0.1.0, v0.1.1, ...) and the in-app version is the
 # pubspec `version:` field — they don't have to match exactly.
+#
+# Note on naming: GitHub's release asset `name` field silently strips
+# non-ASCII characters. To preserve the friendly 江湖如梦 name on the
+# release page, we use pinyin for the filename (jianghu-rumeng-...) and
+# pass the Chinese name as the `label` (the display name shown in the
+# release UI). The download URL is the pinyin file; once installed on
+# the phone the app's display name comes from the manifest (currently
+# "jhrm" — see android/app/src/main/AndroidManifest.xml).
 
 name: build
 
@@ -65,11 +73,11 @@ jobs:
         run: |
           mkdir -p dist
           cp build/app/outputs/flutter-apk/app-debug.apk \
-            "dist/江湖如梦-${{ steps.version.outputs.value }}-android-debug.apk"
+            "dist/jhrm-${{ steps.version.outputs.value }}-android-debug.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: jhrm-android-debug-apk
-          path: dist/江湖如梦-${{ steps.version.outputs.value }}-android-debug.apk
+          path: dist/jhrm-${{ steps.version.outputs.value }}-android-debug.apk
           if-no-files-found: error
           retention-days: 14
 
@@ -101,11 +109,11 @@ jobs:
         run: |
           mkdir -p dist
           cd build/ios/iphoneos
-          zip -r "../../../dist/江湖如梦-${{ steps.version.outputs.value }}-ios-unsigned.app.zip" Runner.app
+          zip -r "../../../dist/jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip" Runner.app
       - uses: actions/upload-artifact@v4
         with:
           name: jhrm-ios-app-bundle
-          path: dist/江湖如梦-${{ steps.version.outputs.value }}-ios-unsigned.app.zip
+          path: dist/jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip
           if-no-files-found: error
           retention-days: 14
 
@@ -130,10 +138,29 @@ jobs:
         with:
           name: jhrm-ios-app-bundle
           path: dist/
+      - name: read app version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | head -1 | sed 's/version: *//' | cut -d+ -f1)
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+      # Build a `files:` list with `path#label` syntax. Path = pinyin
+      # filename (ASCII only — GitHub strips non-ASCII from the
+      # filename). Label = 江湖如梦 + version + platform tag (the
+      # display name shown in the release UI).
+      - name: build release file list
+        id: filelist
+        run: |
+          VERSION="${{ steps.version.outputs.value }}"
+          {
+            echo "files<<EOF"
+            echo "dist/jhrm-${VERSION}-android-debug.apk#江湖如梦 ${VERSION} Android (debug)"
+            echo "dist/jhrm-${VERSION}-ios-unsigned.app.zip#江湖如梦 ${VERSION} iOS (unsigned)"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           generate_release_notes: true
           fail_on_unmatched_files: true
-          files: dist/*
+          files: ${{ steps.filelist.outputs.files }}
