@@ -80,21 +80,19 @@ class _WorldViewState extends State<WorldView>
     }
   }
 
-  void _onIfNavigate(IfSegment fromSegment) {
-    // Find the last chosen choice and follow its goto. If the goto is null
-    // or unknown, exit IF mode (the content is incomplete — return to map).
-    // We don't have access to the choice here; pick the latest history
-    // entry's outgoing goto by looking at the choice list. Simpler: since
-    // each tap already applied heart_delta, treat the navigation as a
-    // "the user picked a choice that didn't lead anywhere" — return to map.
-    //
-    // Per slice 15 audit: 28 gotos in the .md corpus don't resolve. We
-    // accept this and fall back to closing the IF screen so the player
-    // can continue, instead of leaving them stuck.
-    setState(() => _activeSegment = null);
-    if (widget.saveService != null) {
-      widget.saveService!.save(widget.state);
+  void _onIfNavigate(IfChoice c) {
+    // Follow `c.goto` to the next segment. If the target id doesn't
+    // resolve (e.g. content bug, missing stub) fall back to closing the
+    // IF — better to return to the map than to leave the player stuck.
+    if (c.goto != null) {
+      final seg = widget.contentLoader?.get(c.goto!);
+      if (seg != null) {
+        setState(() => _activeSegment = seg);
+        widget.saveService?.save(widget.state);
+        return;
+      }
     }
+    _exitIf();
   }
 
   void _startClosure() {

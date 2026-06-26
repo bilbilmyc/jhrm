@@ -25,7 +25,12 @@ class IfScreen extends StatelessWidget {
   final GameState state;
   final IfSegment segment;
   final VoidCallback onExit;
-  final ValueChanged<IfSegment>? onNavigate;
+  /// Fires when the user taps a choice with a non-null `goto` (and an
+  /// action other than tribulation / ascend). The argument is the
+  /// chosen [IfChoice] so the caller can read `choice.goto` and look
+  /// up the target segment. Pre-slice 46 this received the FROM
+  /// segment, which made修真 multi-step IF chains unreachable.
+  final ValueChanged<IfChoice>? onNavigate;
   final ValueChanged<IfChoice>? onTribulationChoice;
   final ValueChanged<IfChoice>? onAscendChoice;
 
@@ -170,7 +175,7 @@ class IfScreen extends StatelessWidget {
                             // Choice with no target: end the story here.
                             onExit();
                           } else {
-                            onNavigate?.call(segment);
+                            onNavigate?.call(c);
                           }
                         },
                         style: OutlinedButton.styleFrom(
