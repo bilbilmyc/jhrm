@@ -156,12 +156,6 @@ jobs:
       # filename (pinyin). If we want per-asset Chinese labels later we
       # can switch to ncipollo/release-action or post-update via the
       # GitHub API.
-      - name: debug — list dist/ contents
-        run: |
-          echo "=== working dir ==="
-          pwd
-          echo "=== dist/ ==="
-          ls -la dist/ 2>&1 || echo "dist/ does not exist"
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
