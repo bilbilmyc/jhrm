@@ -149,6 +149,14 @@ jobs:
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | head -1 | sed 's/version: *//' | cut -d+ -f1)
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: debug — list dist/ contents
+        run: |
+          echo "=== working dir ==="
+          pwd
+          echo "=== dist/ ==="
+          ls -la dist/ 2>&1 || echo "dist/ does not exist"
+          echo "=== find dist/ ==="
+          find dist/ -type f 2>&1 || true
       # Build a `files:` list with `path#label` syntax. Path = pinyin
       # filename (ASCII only — GitHub strips non-ASCII from the
       # filename). Label = 江湖如梦 + version + platform tag (the
