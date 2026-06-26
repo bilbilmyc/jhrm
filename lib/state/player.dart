@@ -29,6 +29,7 @@ class Player {
     required this.lifespanMax,
     required this.root,
     this.cultivationXp = 0,
+    this.daoCompanion,
     Map<HeartPath, int>? heartVector,
     this.equipment = const [],
     this.elixirs = const [],
@@ -56,6 +57,7 @@ class Player {
   int cultivationXp = 0; // 修为 economy (0..100 at 炼气)
   Element root;
   Map<HeartPath, int> heartVector; // 5-dim (decisions.md #4)
+  String? daoCompanion; // 道侣 name (slice 37 v0.1)
 
   // === Forward-compat fields (always present, MVP may not use) ===
   List<Technique> equipment; // 法宝
@@ -90,6 +92,7 @@ class Player {
         'cultivationXp': cultivationXp,
         'root': root.name,
         'heartVector': {for (final e in heartVector.entries) e.key.name: e.value},
+        'daoCompanion': daoCompanion,
         'equipment': equipment.map((t) => t.toJson()).toList(),
         'elixirs': elixirs.map((t) => t.toJson()).toList(),
         'beasts': beasts.map((t) => t.toJson()).toList(),
@@ -127,6 +130,7 @@ class Player {
       cultivationXp: (j['cultivationXp'] as num?)?.toInt() ?? 0,
       root: Element.fromName(j['root'] as String),
       heartVector: heart,
+      daoCompanion: j['daoCompanion'] as String?,
       equipment: ((j['equipment'] as List?) ?? const [])
           .map((t) => Technique.fromJson(t as Map<String, dynamic>))
           .toList(),

@@ -62,6 +62,8 @@ class StatusBar extends StatelessWidget {
           const SizedBox(height: 4),
           _bar('寿元', lifespanRatio, '${p.lifespan}/${p.lifespanMax} 月',
               lifespanRatio < 0.3 ? XianxiaTheme.cinnabarRed : XianxiaTheme.jadeGreen),
+          const SizedBox(height: 4),
+          _karmaRow(p.karma),
           const SizedBox(height: 10),
           const Text('心之所向', style: TextStyle(
             color: XianxiaTheme.goldLeaf,
@@ -163,6 +165,38 @@ class StatusBar extends StatelessWidget {
           )),
         ],
       ),
+    );
+  }
+
+  Widget _karmaRow(int karma) {
+    final color = karma > 0
+        ? XianxiaTheme.jadeGreen
+        : karma < 0
+            ? XianxiaTheme.cinnabarRed
+            : XianxiaTheme.scrollTan;
+    final label = karma > 0 ? '善' : karma < 0 ? '恶' : '中';
+    return Row(
+      children: [
+        SizedBox(
+          width: 32,
+          child: Text('因果', style: const TextStyle(
+            color: XianxiaTheme.scrollTan,
+            fontSize: 12,
+          )),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.2),
+            border: Border.all(color: color, width: 0.5),
+            borderRadius: BorderRadius.circular(2),
+          ),
+          child: Text('$label $karma', style: TextStyle(
+            color: color,
+            fontSize: 11,
+          )),
+        ),
+      ],
     );
   }
 }

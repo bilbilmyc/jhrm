@@ -180,7 +180,6 @@ void main() {
 
       expect(find.text('飞升·五道抉择'), findsAtLeastNWidgets(1),
           reason: 'auto-routes to 飞升 5-选项 IF at 大乘 9/9 + xp 100');
-      // 5 options visible.
       for (final opt in [
         '以剑入道，斩断一切',
         '以魔代天，夺而自立',
@@ -212,5 +211,14 @@ void main() {
       expect(state.ending, 'ascended-swordDao',
           reason: 'forceAscend sets ending from dominant 道心');
     });
+  });
+
+  group('World view save UI (slice 35)', () {
+    // Implementation is in world_view (PopupMenuButton with 保存/重置
+    // items). Widget tests for the popup menu are flaky in the test
+    // framework's fake-async zone (the save() Future crosses to real
+    // I/O). The end-to-end save+reset behavior is covered by the
+    // gold_finger_overlay_test "SaveService + resetToFresh" companion
+    // test. Manual UI verification happens in slice 38 (flutter run).
   });
 }

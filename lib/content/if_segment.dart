@@ -18,6 +18,8 @@ class IfChoice {
     this.goto,
     this.action = 'goto',
     this.heartDelta = const {},
+    this.karmaDelta = 0,
+    this.companion,
   });
   final String choice;
   final String? goto;
@@ -27,11 +29,21 @@ class IfChoice {
   final String action;
   final Map<HeartPath, int> heartDelta;
 
+  /// 因果 (karma) change applied to the player when this choice is taken.
+  /// Positive = 善, negative = 恶. Range typically -10..+10.
+  final int karmaDelta;
+
+  /// If non-null, the player takes this 道侣 on this choice. v0.1
+  /// mechanism — the IF defines who the candidate is; this just records
+  /// the player's commitment.
+  final String? companion;
+
   Map<String, dynamic> toJson() => {
         'choice': choice,
         'goto': goto,
         'action': action,
         'heart_delta': {for (final e in heartDelta.entries) e.key.name: e.value},
+        'karma_delta': karmaDelta,
       };
 
   factory IfChoice.fromJson(Map<String, dynamic> j) {
@@ -56,6 +68,8 @@ class IfChoice {
       goto: j['goto'] as String?,
       action: (j['action'] as String?) ?? 'goto',
       heartDelta: map,
+      karmaDelta: (j['karma_delta'] as num?)?.toInt() ?? 0,
+      companion: j['companion'] as String?,
     );
   }
 }

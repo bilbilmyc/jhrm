@@ -222,6 +222,27 @@ class _WorldViewState extends State<WorldView>
     widget.state.notify();
   }
 
+  Future<void> _saveNow() async {
+    if (widget.saveService == null) return;
+    await widget.saveService!.save(widget.state);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('已保存'), duration: Duration(seconds: 1)),
+    );
+  }
+
+  void _resetGame() {
+    setState(() {
+      _activeSegment = null;
+      _breakthroughSuccess = null;
+      _tribulationResult = null;
+    });
+    widget.state.resetToFresh();
+    if (widget.saveService != null) {
+      widget.saveService!.delete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Auto-route to the realm-appropriate tribulation IF whenever the
@@ -288,6 +309,27 @@ class _WorldViewState extends State<WorldView>
     return Scaffold(
       appBar: AppBar(
         title: Text(planeName),
+        actions: [
+          if (widget.saveService != null)
+            PopupMenuButton<String>(
+              key: const Key('world-view-menu'),
+              tooltip: '存档',
+              onSelected: (v) {
+                switch (v) {
+                  case 'save':
+                    _saveNow();
+                    break;
+                  case 'reset':
+                    _resetGame();
+                    break;
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'save', child: Text('保存')),
+                PopupMenuItem(value: 'reset', child: Text('重置')),
+              ],
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(

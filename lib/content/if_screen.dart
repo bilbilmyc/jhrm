@@ -33,6 +33,12 @@ class IfScreen extends StatelessWidget {
     for (final e in c.heartDelta.entries) {
       state.applyHeartDelta(e.key, e.value);
     }
+    if (c.karmaDelta != 0) {
+      state.player.karma += c.karmaDelta;
+    }
+    if (c.companion != null) {
+      state.player.daoCompanion = c.companion;
+    }
     state.ifState.history.add(segment.id);
     state.notify();
   }
