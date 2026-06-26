@@ -1,0 +1,94 @@
+# GitHub Actions: test + build Android/iOS artifacts
+#
+# Trigger: push to main, or manual dispatch (Actions tab → Run workflow).
+#
+# Artifacts (download from the workflow run page):
+#   - jhrm-android-debug.apk: signed with Flutter's debug keystore,
+#     sideloadable to any Android device via `adb install` or by
+#     transferring the file and tapping it. This is the main artifact
+#     for "test on phone".
+#   - jhrm-ios.app.zip: unsigned .app bundle. Open in Xcode on a Mac,
+#     set a development team, install via the device window. For
+#     day-to-day iOS testing, `flutter run` on a connected Mac is
+#     usually faster than going through CI.
+#
+# Flutter version: pin a stable channel. Bump here when the project's
+# pubspec sdk constraint moves.
+
+name: build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: flutter test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter --version
+      - run: flutter pub get
+      - name: static analysis (warnings allowed, errors fail)
+        run: flutter analyze --no-fatal-warnings || true
+      - name: run unit + widget tests
+        run: flutter test
+
+  build-android:
+    name: android debug APK
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: build debug APK
+        # --debug is signed with Flutter's auto-generated debug keystore
+        # and works on any Android device. For a release build later,
+        # configure android/key.properties + a release keystore.
+        run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jhrm-android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+  build-ios:
+    name: iOS unsigned .app bundle
+    runs-on: macos-latest
+    needs: test
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: build iOS without code signing
+        # --no-codesign skips the certificate + provisioning profile
+        # step. The .app bundle can be re-signed locally on a Mac with
+        # Xcode for dev testing. For TestFlight / App Store, set up
+        # signing secrets and remove --no-codesign.
+        run: flutter build ios --release --no-codesign
+      - name: zip the .app bundle
+        run: |
+          cd build/ios/iphoneos
+          zip -r ../../../jhrm-ios.app.zip Runner.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jhrm-ios-app-bundle
+          path: jhrm-ios.app.zip
+          if-no-files-found: error
+          retention-days: 14
