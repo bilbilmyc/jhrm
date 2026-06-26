@@ -69,15 +69,18 @@ jobs:
         # and works on any Android device. For a release build later,
         # configure android/key.properties + a release keystore.
         run: flutter build apk --debug
-      - name: copy APK to dist/ with friendly name
+      - name: copy APK with friendly name (workspace root)
+        # Upload path is a single-file relative path; the artifact zip
+        # preserves whatever path is given. To make the release job's
+        # download produce a clean `dist/jhrm-...` (not `dist/dist/...`),
+        # we put the file at the workspace root, not under dist/.
         run: |
-          mkdir -p dist
           cp build/app/outputs/flutter-apk/app-debug.apk \
-            "dist/jhrm-${{ steps.version.outputs.value }}-android-debug.apk"
+            "jhrm-${{ steps.version.outputs.value }}-android-debug.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: jhrm-android-debug-apk
-          path: dist/jhrm-${{ steps.version.outputs.value }}-android-debug.apk
+          path: jhrm-${{ steps.version.outputs.value }}-android-debug.apk
           if-no-files-found: error
           retention-days: 14
 
@@ -105,15 +108,14 @@ jobs:
         # Xcode for dev testing. For TestFlight / App Store, set up
         # signing secrets and remove --no-codesign.
         run: flutter build ios --release --no-codesign
-      - name: zip the .app bundle to dist/
+      - name: zip the .app bundle (workspace root)
         run: |
-          mkdir -p dist
           cd build/ios/iphoneos
-          zip -r "../../../dist/jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip" Runner.app
+          zip -r "../../../jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip" Runner.app
       - uses: actions/upload-artifact@v4
         with:
           name: jhrm-ios-app-bundle
-          path: dist/jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip
+          path: jhrm-${{ steps.version.outputs.value }}-ios-unsigned.app.zip
           if-no-files-found: error
           retention-days: 14
 
