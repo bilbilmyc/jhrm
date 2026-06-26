@@ -33,6 +33,22 @@ class IfScreen extends StatelessWidget {
     for (final e in c.heartDelta.entries) {
       state.applyHeartDelta(e.key, e.value);
     }
+    // 道侣共振 (slice 42): if the player has a 道侣, apply the
+    // companion's per-heart-path influence to each heart_delta in this
+    // choice. +1 = 共振 (resonance, the path matches the companion's
+    // tendency), -1 = 逆冲 (discord).
+    final companion = state.player.daoCompanion;
+    if (companion != null && c.heartDelta.isNotEmpty) {
+      final influence = _companionInfluence[companion];
+      if (influence != null) {
+        for (final path in c.heartDelta.keys) {
+          final bonus = influence[path] ?? 0;
+          if (bonus != 0) {
+            state.applyHeartDelta(path, bonus);
+          }
+        }
+      }
+    }
     if (c.karmaDelta != 0) {
       state.player.karma += c.karmaDelta;
     }
@@ -42,6 +58,16 @@ class IfScreen extends StatelessWidget {
     state.ifState.history.add(segment.id);
     state.notify();
   }
+
+  /// Per-companion heart-path influence map. +1 = 共振 (resonance),
+  /// -1 = 逆冲 (discord), 0 = 中道 (neutral).
+  /// 玉箫 is 隐道 — resonating with 隐道 choices, discordant with 魔道.
+  static const Map<String, Map<domain.HeartPath, int>> _companionInfluence = {
+    '玉箫': {
+      domain.HeartPath.hiddenDao: 1,
+      domain.HeartPath.demonDao: -1,
+    },
+  };
 
   @override
   Widget build(BuildContext context) {

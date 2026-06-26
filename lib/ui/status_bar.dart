@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../engine/cultivation_engine.dart';
+import '../state/enums.dart' as domain;
 import '../state/enums.dart';
 import '../state/game_state.dart';
 import 'theme.dart';
@@ -64,6 +65,10 @@ class StatusBar extends StatelessWidget {
               lifespanRatio < 0.3 ? XianxiaTheme.cinnabarRed : XianxiaTheme.jadeGreen),
           const SizedBox(height: 4),
           _karmaRow(p.karma),
+          if (p.daoCompanion != null) ...[
+            const SizedBox(height: 4),
+            _companionRow(p.daoCompanion!),
+          ],
           const SizedBox(height: 10),
           const Text('心之所向', style: TextStyle(
             color: XianxiaTheme.goldLeaf,
@@ -198,5 +203,50 @@ class StatusBar extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// 道侣 (dao companion) row. Shown only if the player has a companion.
+  /// The 道心倾向 (heart-path tendency) is hard-coded per companion name
+  /// for v0.1 — 玉箫 is 隐道. Future slices can add a companion profile
+  /// table.
+  Widget _companionRow(String name) {
+    final tendency = _tendencyForCompanion(name);
+    final color = tendency != null
+        ? (XianxiaTheme.heartColor[tendency.displayName] ?? XianxiaTheme.scrollTan)
+        : XianxiaTheme.scrollTan;
+    return Row(
+      children: [
+        const SizedBox(
+          width: 32,
+          child: Text('道侣', style: TextStyle(
+            color: XianxiaTheme.scrollTan,
+            fontSize: 12,
+          )),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.2),
+            border: Border.all(color: color, width: 0.5),
+            borderRadius: BorderRadius.circular(2),
+          ),
+          child: Text(
+            tendency == null
+                ? name
+                : '$name · ${tendency.displayName}',
+            style: TextStyle(color: color, fontSize: 11),
+          ),
+        ),
+      ],
+    );
+  }
+
+  domain.HeartPath? _tendencyForCompanion(String name) {
+    switch (name) {
+      case '玉箫':
+        return domain.HeartPath.hiddenDao;
+      default:
+        return null;
+    }
   }
 }
