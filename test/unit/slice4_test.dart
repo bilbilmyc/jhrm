@@ -42,8 +42,8 @@ void main() {
 
     test('满 修为 triggers 突破 IF (decisions.md #14: 80% + 道心 10%)', () {
       final s = GameState.fresh();
-      // Force 100% to deterministically test 80% path
       s.player.heartVector[HeartPath.swordDao] = 1; // +10% alignment bonus
+      s.forceSuccess = true; // deterministic — bypasses RNG roll
       final e = CultivationEngine(s);
       e.cultivationXp = 99;
       e.startClosure();
